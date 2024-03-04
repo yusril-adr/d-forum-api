@@ -14,7 +14,7 @@ describe('UserRepositoryPostgres', () => {
     await pool.end();
   });
 
-  describe('verifyAvailableUsername function', () => {
+  describe('verifyAvailableUsername', () => {
     it('should throw InvariantError when username not available', async () => {
       // Arrange
       await UsersTableTestHelper.addUser({ username: 'dicoding' }); // memasukan user baru dengan username dicoding
@@ -33,7 +33,7 @@ describe('UserRepositoryPostgres', () => {
     });
   });
 
-  describe('addUser function', () => {
+  describe('addUser', () => {
     it('should persist register user and return registered user correctly', async () => {
       // Arrange
       const registerUser = new RegisterUser({

@@ -16,20 +16,20 @@ exports.up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
-    isDeleted: {
-      type: 'BOOLEAN',
-      default: false,
+    owner: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      references: 'users',
+      onDelete: 'cascade',
     },
     createdAt: {
       type: 'timestamp',
       notNull: true,
       default: pgm.func('current_timestamp'),
     },
-    owner: {
-      type: 'VARCHAR(50)',
-      notNull: true,
-      references: 'users',
-      onDelete: 'cascade',
+    isDeleted: {
+      type: 'BOOLEAN',
+      default: false,
     },
   });
 

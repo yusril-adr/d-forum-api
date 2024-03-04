@@ -12,7 +12,7 @@ describe('AuthenticationRepository postgres', () => {
     await pool.end();
   });
 
-  describe('addToken function', () => {
+  describe('addToken', () => {
     it('should add token to database', async () => {
       // Arrange
       const authenticationRepository = new AuthenticationRepositoryPostgres(pool);
@@ -28,7 +28,7 @@ describe('AuthenticationRepository postgres', () => {
     });
   });
 
-  describe('checkAvailabilityToken function', () => {
+  describe('checkAvailabilityToken', () => {
     it('should throw InvariantError if token not available', async () => {
       // Arrange
       const authenticationRepository = new AuthenticationRepositoryPostgres(pool);

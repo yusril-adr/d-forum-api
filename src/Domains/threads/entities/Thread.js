@@ -20,7 +20,7 @@ class Thread {
       isDeleted = false,
     } = payload;
 
-    if (!id || !title || !body || !owner) {
+    if (!title || !body || !owner) {
       throw new Error('THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
@@ -34,6 +34,14 @@ class Thread {
     ) {
       throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+  }
+
+  verifyOwner(userId) {
+    if (typeof userId !== 'string') {
+      throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    }
+
+    return this.owner === userId;
   }
 }
 
