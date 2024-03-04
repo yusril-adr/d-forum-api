@@ -24,6 +24,7 @@ const config = {
     database: process.env.PGDATABASE,
   },
   authentication: {
+    accessTokenAge: process.env.ACCESS_TOKEN_AGE,
     accessTokenKey: process.env.ACCESS_TOKEN_KEY,
     refreshTokenKey: process.env.REFRESH_TOKEN_KEY,
   },

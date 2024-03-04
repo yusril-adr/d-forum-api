@@ -28,12 +28,12 @@ const createServer = async (container) => {
 
   // Define auth strategy with jwt
   server.auth.strategy('dforum_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.authentication.accessTokenKey,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: config.authentication.accessTokenAge,
     },
     validate: (artifacts) => ({
       isValid: true,
