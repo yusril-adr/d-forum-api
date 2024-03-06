@@ -76,5 +76,23 @@ describe('Thread entities', () => {
       expect(thread.verifyOwner('notTheOwner')).toBeFalsy();
       expect(thread.verifyOwner('validOwner')).toBeTruthy();
     });
+
+    it('should hide title and body content when thread is deleted', () => {
+      // Arrange
+      const payload = {
+        id: 'someId',
+        title: 'someTitle',
+        body: 'someBody',
+        owner: 'validOwner',
+        isDeleted: true,
+      };
+
+      // Action
+      const thread = new Thread(payload);
+
+      //  Assert
+      expect(thread.title).not.toEqual('someTitle');
+      expect(thread.body).not.toEqual('someBody');
+    });
   });
 });

@@ -1,13 +1,13 @@
 class Thread {
   constructor(payload) {
-    this._verifyPayload(payload);
-
     this.id = payload.id;
     this.title = payload.title;
     this.body = payload.body;
     this.owner = payload.owner;
     this.createdAt = payload.createdAt || new Date();
     this.isDeleted = payload.isDeleted || false;
+
+    this._verifyPayload(payload);
   }
 
   _verifyPayload(payload) {
@@ -34,6 +34,11 @@ class Thread {
     ) {
       throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+
+    if (isDeleted) {
+      this.title = '**thread telah dihapus**';
+      this.body = '**thread telah dihapus**';
+    }
   }
 
   verifyOwner(userId) {
@@ -43,6 +48,14 @@ class Thread {
 
     return this.owner === userId;
   }
+
+  /*
+    TODO:
+      - Add get detailedThread
+        - Alias owner into username
+        - Populate comments and replies
+      - Add set comments with each item is instance of Comment
+  */
 }
 
 module.exports = Thread;

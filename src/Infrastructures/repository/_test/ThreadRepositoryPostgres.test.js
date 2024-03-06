@@ -1,4 +1,4 @@
-const InvariantError = require('../../../Commons/exceptions/InvariantError');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const pool = require('../../database/postgres/pool');
@@ -106,17 +106,31 @@ describe('ThreadRepository postgres', () => {
       expect(threads[0].id).toBe('test1');
       expect(threads[1].id).toBe('test2');
     });
+
+    it('should not return deleted threads', async () => {
+      // Arrange
+      const threadRepository = new ThreadRepositoryPostgres(pool, {});
+      await ThreadsTableTestHelper.addThread({ id: 'test1', owner: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'test2', owner: 'user-123', isDeleted: true });
+
+      // Action
+      const threads = await threadRepository.getThreads();
+
+      // Assert
+      expect(threads).toHaveLength(1);
+      expect(threads[0].id).toBe('test1');
+    });
   });
 
   describe('getThreadById', () => {
-    it('should throw InvariantError when thread not found', async () => {
+    it('should throw NotFoundError when thread not found', async () => {
       // Arrange
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
 
       // Action & Assert
       await expect(threadRepositoryPostgres.getThreadById('notFoundId'))
         .rejects
-        .toThrow(InvariantError);
+        .toThrow(NotFoundError);
     });
 
     it('should return thread correctly', async () => {
@@ -133,6 +147,16 @@ describe('ThreadRepository postgres', () => {
   });
 
   describe('deleteThreadById', () => {
+    it('should throw NotFoundError when thread not found', async () => {
+      // Arrange
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.deleteThreadById('notFoundId'))
+        .rejects
+        .toThrow(NotFoundError);
+    });
+
     it('should delete thread from database', async () => {
       // Arrange
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});

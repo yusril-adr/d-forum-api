@@ -1,10 +1,10 @@
 const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
 const Thread = require('../../../../Domains/threads/entities/Thread');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
-const AddThreadUseCase = require('../AddThreadUseCase');
+const GetThreadByIdUseCase = require('../GetThreadByIdUseCase');
 const pool = require('../../../../Infrastructures/database/postgres/pool');
 
-describe('AddThreadUseCase', () => {
+describe('GetThreadByIdUseCase', () => {
   beforeAll(async () => {
     await UsersTableTestHelper.addUser({ id: 'user-123' });
   });
@@ -14,22 +14,14 @@ describe('AddThreadUseCase', () => {
     await pool.end();
   });
 
-  it('should orchestrating the add thread action correctly', async () => {
+  it('should orchestrating get thread by id action correctly', async () => {
     // Arrange
     const expectedDate = new Date();
-    const useCasePayload = {
-      title: 'title',
-      body: 'body',
-    };
-
-    const fakeValidator = {
-      validate: (_, payload) => payload,
-    };
 
     const mockThread = new Thread({
       id: 'thread-1',
-      title: useCasePayload.title,
-      body: useCasePayload.body,
+      title: 'title-1',
+      body: 'body-1',
       owner: 'user-123',
       createdAt: expectedDate,
     });
@@ -38,31 +30,19 @@ describe('AddThreadUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
 
     /** mocking needed function */
-    mockThreadRepository.addThread = jest.fn()
+    mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve(mockThread));
 
     /** creating use case instance */
-    const addThreadUsecase = new AddThreadUseCase({
+    const getThreadByIdUseCase = new GetThreadByIdUseCase({
       threadRepository: mockThreadRepository,
-      validator: fakeValidator,
     });
 
     // Action
-    const createdThread = await addThreadUsecase.execute('user-123', useCasePayload);
+    const thread = await getThreadByIdUseCase.execute('thread-1');
 
     // Assert
-    expect(createdThread).toStrictEqual(new Thread({
-      id: 'thread-1',
-      title: useCasePayload.title,
-      body: useCasePayload.body,
-      owner: 'user-123',
-      createdAt: expectedDate,
-    }));
-
-    expect(mockThreadRepository.addThread).toHaveBeenCalledWith({
-      title: useCasePayload.title,
-      body: useCasePayload.body,
-      owner: 'user-123',
-    });
+    expect(thread).toStrictEqual(mockThread);
+    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-1');
   });
 });

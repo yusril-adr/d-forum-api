@@ -1,4 +1,4 @@
-const InvariantError = require('../../Commons/exceptions/InvariantError');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const Thread = require('../../Domains/threads/entities/Thread');
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
 
@@ -38,7 +38,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   async getThreads() {
     // Avoid using SELECT *
     const query = {
-      text: 'SELECT id, title, body, owner, "createdAt" FROM threads WHERE "isDeleted" = $1',
+      text: 'SELECT id, title, body, owner, "createdAt" FROM threads WHERE "isDeleted" = $1 ORDER BY "createdAt"',
       values: [false],
     };
     const result = await this._pool.query(query);
@@ -59,7 +59,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError('thread not found');
+      throw new NotFoundError('thread not found');
     }
 
     const thread = new Thread(result.rows[0]);
@@ -72,7 +72,10 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       text: 'UPDATE threads SET "isDeleted" = $1 WHERE id = $2',
       values: [true, threadId],
     };
-    await this._pool.query(query);
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new NotFoundError('thread not found');
+    }
   }
 }
 
