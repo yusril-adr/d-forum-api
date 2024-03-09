@@ -21,6 +21,7 @@ describe('Thread entities', () => {
       title: 'someTitle',
       body: 'someBody',
       owner: 'someOwner',
+      username: 123,
       date: 'invalidDate',
     };
 
@@ -96,41 +97,6 @@ describe('Thread entities', () => {
       //  Assert
       expect(thread.verifyOwner('notTheOwner')).toBeFalsy();
       expect(thread.verifyOwner('validOwner')).toBeTruthy();
-    });
-  });
-
-  describe('username props', () => {
-    it('should throw error when payload not meet data type specification', () => {
-      // Arrange
-      const payload = {
-        id: 'someId',
-        title: 'someTitle',
-        body: 'someBody',
-        owner: 'validOwner',
-      };
-
-      // Action
-      const thread = new Thread(payload);
-
-      //  Assert
-      expect(() => { thread.username = 123; }).toThrow('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
-    });
-
-    it('should return username value', () => {
-      // Arrange
-      const payload = {
-        id: 'someId',
-        title: 'someTitle',
-        body: 'someBody',
-        owner: 'validOwner',
-      };
-
-      // Action
-      const thread = new Thread(payload);
-      thread.username = 'someUsername';
-
-      //  Assert
-      expect(thread.username).toEqual('someUsername');
     });
   });
 

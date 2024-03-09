@@ -21,6 +21,7 @@ describe('Comment entities', () => {
       content: 'someContent',
       createdAt: 'invalidDate',
       owner: 'someOwner',
+      username: 123,
       thread: 'someThread',
     };
 
@@ -95,41 +96,6 @@ describe('Comment entities', () => {
       //  Assert
       expect(comment.verifyOwner('notTheOwner')).toBeFalsy();
       expect(comment.verifyOwner('validOwner')).toBeTruthy();
-    });
-  });
-
-  describe('username props', () => {
-    it('should throw error when payload not meet data type specification', () => {
-      // Arrange
-      const payload = {
-        id: 'someId',
-        content: 'someContent',
-        owner: 'validOwner',
-        thread: 'someThread',
-      };
-
-      // Action
-      const comment = new Comment(payload);
-
-      //  Assert
-      expect(() => { comment.username = 123; }).toThrow('COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
-    });
-
-    it('should return username value', () => {
-      // Arrange
-      const payload = {
-        id: 'someId',
-        content: 'someContent',
-        owner: 'validOwner',
-        thread: 'someThread',
-      };
-
-      // Action
-      const comment = new Comment(payload);
-      comment.username = 'someUsername';
-
-      //  Assert
-      expect(comment.username).toEqual('someUsername');
     });
   });
 

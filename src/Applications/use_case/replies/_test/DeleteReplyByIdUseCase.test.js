@@ -41,7 +41,7 @@ describe('DeleteReplyByIdUseCase', () => {
     });
 
     // Action & Assert
-    expect(deleteReplyByIdUseCase.execute({
+    await expect(deleteReplyByIdUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       commentId: 'comment-123',
@@ -70,7 +70,7 @@ describe('DeleteReplyByIdUseCase', () => {
     });
 
     // Action & Assert
-    expect(deleteCommentByIdUseCase.execute({
+    await expect(deleteCommentByIdUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       commentId: 'comment-123',
@@ -102,13 +102,59 @@ describe('DeleteReplyByIdUseCase', () => {
     });
 
     // Action & Assert
-    expect(deleteReplyByIdUseCase.execute({
+    await expect(deleteReplyByIdUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       commentId: 'comment-123',
       replyId: 'reply-123',
     })).rejects.toThrow(Error);
     expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+  });
+
+  it('should throw error when user id is not the owner', async () => {
+    // Arrange
+    /** creating dependency of use case */
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+    const mockReplyRepository = new ReplyRepository();
+
+    const mockReply = new Reply({
+      id: 'reply-123',
+      content: 'content',
+      owner: 'user-123',
+      parent: 'comment-123',
+    });
+
+    /** mocking needed function */
+    mockThreadRepository.getThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockCommentRepository.getCommentById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.getReplyById = jest.fn()
+      .mockImplementation(() => Promise.resolve(mockReply));
+    mockReplyRepository.deleteReplyById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+
+    /** creating use case instance */
+    const deleteReplyByIdUseCase = new DeleteReplyByIdUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+      replyRepository: mockReplyRepository,
+    });
+
+    // Action & ASSERT
+    await expect(deleteReplyByIdUseCase.execute({
+      userId: 'not the owner',
+      threadId: 'thread-123',
+      commentId: 'comment-123',
+      replyId: 'reply-123',
+    })).rejects.toThrow('DELETE_REPLY_USECASE.NOT_AUTHORIZED');
+
+    // Assert
+    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+    expect(mockReplyRepository.getReplyById).toHaveBeenCalledWith('reply-123');
   });
 
   it('should orchestrating delete comment by id action correctly', async () => {

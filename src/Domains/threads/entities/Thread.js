@@ -4,6 +4,7 @@ class Thread {
     this.title = payload.title;
     this.body = payload.body;
     this.owner = payload.owner;
+    this.username = payload.username;
     this.date = payload.date || new Date();
     this.isDeleted = payload.isDeleted || false;
     this.Comment = undefined;
@@ -18,6 +19,7 @@ class Thread {
       title,
       body,
       owner,
+      username,
       date = new Date(),
       isDeleted = false,
     } = payload;
@@ -31,6 +33,7 @@ class Thread {
       || typeof title !== 'string'
       || typeof body !== 'string'
       || typeof owner !== 'string'
+      || (username && (typeof username !== 'string'))
       || !(date instanceof Date)
       || typeof isDeleted !== 'boolean'
     ) {
@@ -49,17 +52,6 @@ class Thread {
     }
 
     return this.owner === userId;
-  }
-
-  set username(username) {
-    if (typeof username !== 'string') {
-      throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
-    }
-    this._username = username;
-  }
-
-  get username() {
-    return this._username;
   }
 
   initiateComments(comments) {

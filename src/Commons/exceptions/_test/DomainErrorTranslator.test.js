@@ -1,8 +1,10 @@
 const DomainErrorTranslator = require('../DomainErrorTranslator');
 const InvariantError = require('../InvariantError');
+const AuthorizationError = require('../AuthorizationError');
 
 describe('DomainErrorTranslator', () => {
   it('should translate error correctly', () => {
+    // Entities
     expect(DomainErrorTranslator.translate(new Error('REGISTER_USER.NOT_CONTAIN_NEEDED_PROPERTY')))
       .toStrictEqual(new InvariantError('tidak dapat membuat user baru karena properti yang dibutuhkan tidak ada'));
     expect(DomainErrorTranslator.translate(new Error('REGISTER_USER.NOT_MEET_DATA_TYPE_SPECIFICATION')))
@@ -41,6 +43,14 @@ describe('DomainErrorTranslator', () => {
       .toStrictEqual(new InvariantError('tidak dapat membuat reply baru karena properti yang dibutuhkan tidak ada'));
     expect(DomainErrorTranslator.translate(new Error('REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION')))
       .toStrictEqual(new InvariantError('tidak dapat membuat reply baru karena tipe data tidak sesuai'));
+
+    // Use Case
+    expect(DomainErrorTranslator.translate(new Error('DELETE_THREAD_USECASE.NOT_AUTHORIZED')))
+      .toStrictEqual(new AuthorizationError('hanya owner yang dapat menghapus thread ini'));
+    expect(DomainErrorTranslator.translate(new Error('DELETE_COMMENT_USECASE.NOT_AUTHORIZED')))
+      .toStrictEqual(new AuthorizationError('hanya owner yang dapat menghapus komen ini'));
+    expect(DomainErrorTranslator.translate(new Error('DELETE_REPLY_USECASE.NOT_AUTHORIZED')))
+      .toStrictEqual(new AuthorizationError('hanya owner yang dapat menghapus balasan ini'));
   });
 
   it('should return original error when error message is not needed to translate', () => {

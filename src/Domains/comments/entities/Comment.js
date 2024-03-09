@@ -3,6 +3,7 @@ class Comment {
     this.id = payload.id;
     this.content = payload.content;
     this.owner = payload.owner;
+    this.username = payload.username;
     this.thread = payload.thread;
     this.date = payload.date || new Date();
     this.isDeleted = payload.isDeleted || false;
@@ -17,6 +18,7 @@ class Comment {
       id,
       content,
       owner,
+      username,
       thread,
       createdAt = new Date(),
       isDeleted = false,
@@ -30,6 +32,7 @@ class Comment {
       typeof id !== 'string'
       || typeof content !== 'string'
       || typeof owner !== 'string'
+      || (username && (typeof username !== 'string'))
       || typeof thread !== 'string'
       || !(createdAt instanceof Date)
       || typeof isDeleted !== 'boolean'
@@ -48,17 +51,6 @@ class Comment {
     }
 
     return this.owner === userId;
-  }
-
-  set username(username) {
-    if (typeof username !== 'string') {
-      throw new Error('COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
-    }
-    this._username = username;
-  }
-
-  get username() {
-    return this._username;
   }
 
   initiateReplies(replies) {

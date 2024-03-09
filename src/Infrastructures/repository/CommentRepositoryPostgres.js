@@ -45,7 +45,8 @@ class CommentRepositoryPostgres extends CommentRepository {
           comments.owner,
           comments.thread,
           users.username,
-          comments."createdAt" as date
+          comments."createdAt" as date,
+          comments."isDeleted"
         FROM comments
         JOIN users
         ON comments.owner = users.id
@@ -61,11 +62,7 @@ class CommentRepositoryPostgres extends CommentRepository {
       return [];
     }
 
-    return result.rows.map((comment) => {
-      const res = new Comment(comment);
-      res.username = comment.username;
-      return res;
-    });
+    return result.rows.map((comment) => new Comment(comment));
   }
 
   async getCommentById(commentId) {
@@ -77,7 +74,8 @@ class CommentRepositoryPostgres extends CommentRepository {
         comments.owner,
         comments.thread,
         users.username,
-        comments."createdAt" as date
+        comments."createdAt" as date,
+        comments."isDeleted"
       FROM comments
       JOIN users
       ON comments.owner = users.id
@@ -94,8 +92,6 @@ class CommentRepositoryPostgres extends CommentRepository {
     }
 
     const comment = new Comment(result.rows[0]);
-    comment.username = result.rows[0].username;
-
     return comment;
   }
 

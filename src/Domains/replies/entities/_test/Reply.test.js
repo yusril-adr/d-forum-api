@@ -18,6 +18,7 @@ describe('Reply entities', () => {
       content: 'someContent',
       createdAt: 'invalidDate',
       owner: 'someOwner',
+      username: 123,
       parent: 'someComment',
     };
 
@@ -92,41 +93,6 @@ describe('Reply entities', () => {
       //  Assert
       expect(reply.verifyOwner('notTheOwner')).toBeFalsy();
       expect(reply.verifyOwner('validOwner')).toBeTruthy();
-    });
-  });
-
-  describe('username props', () => {
-    it('should throw error when payload not meet data type specification', () => {
-      // Arrange
-      const payload = {
-        id: 'someId',
-        content: 'someContent',
-        owner: 'someOwner',
-        parent: 'someParent',
-      };
-
-      // Action
-      const reply = new Reply(payload);
-
-      //  Assert
-      expect(() => { reply.username = 123; }).toThrow('REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
-    });
-
-    it('should return username value', () => {
-      // Arrange
-      const payload = {
-        id: 'someId',
-        content: 'someContent',
-        owner: 'someOwner',
-        parent: 'someParent',
-      };
-
-      // Action
-      const reply = new Reply(payload);
-      reply.username = 'someUsername';
-
-      //  Assert
-      expect(reply.username).toEqual('someUsername');
     });
   });
 });

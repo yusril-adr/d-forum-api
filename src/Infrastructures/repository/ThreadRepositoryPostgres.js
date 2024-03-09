@@ -45,7 +45,8 @@ class ThreadRepositoryPostgres extends ThreadRepository {
           threads.body,
           threads.owner,
           users.username,
-          threads."createdAt"
+          threads."createdAt",
+          threads."isDeleted"
         FROM threads
         JOIN users
         ON threads.owner = users.id
@@ -61,11 +62,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       return [];
     }
 
-    return result.rows.map((thread) => {
-      const res = new Thread(thread);
-      res.username = thread.username;
-      return res;
-    });
+    return result.rows.map((thread) => new Thread(thread));
   }
 
   async getThreadById(threadId) {
@@ -95,7 +92,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     }
 
     const thread = new Thread(result.rows[0]);
-    thread.username = result.rows[0].username;
 
     return thread;
   }

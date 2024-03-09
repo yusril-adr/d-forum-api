@@ -1,3 +1,4 @@
+const AuthorizationError = require('./AuthorizationError');
 const InvariantError = require('./InvariantError');
 
 const DomainErrorTranslator = {
@@ -7,6 +8,7 @@ const DomainErrorTranslator = {
 };
 
 DomainErrorTranslator._directories = {
+  // Entities
   'REGISTER_USER.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat user baru karena properti yang dibutuhkan tidak ada'),
   'REGISTER_USER.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat user baru karena tipe data tidak sesuai'),
   'REGISTER_USER.USERNAME_LIMIT_CHAR': new InvariantError('tidak dapat membuat user baru karena karakter username melebihi batas limit'),
@@ -29,6 +31,11 @@ DomainErrorTranslator._directories = {
 
   'REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat reply baru karena properti yang dibutuhkan tidak ada'),
   'REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat reply baru karena tipe data tidak sesuai'),
+
+  // Use Case
+  'DELETE_THREAD_USECASE.NOT_AUTHORIZED': new AuthorizationError('hanya owner yang dapat menghapus thread ini'),
+  'DELETE_COMMENT_USECASE.NOT_AUTHORIZED': new AuthorizationError('hanya owner yang dapat menghapus komen ini'),
+  'DELETE_REPLY_USECASE.NOT_AUTHORIZED': new AuthorizationError('hanya owner yang dapat menghapus balasan ini'),
 };
 
 module.exports = DomainErrorTranslator;

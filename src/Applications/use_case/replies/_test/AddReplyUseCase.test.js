@@ -50,7 +50,7 @@ describe('AddReplyUseCase', () => {
     });
 
     // Action & Assert
-    expect(addReplyUseCase.execute({
+    await expect(addReplyUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       commentId: 'comment-123',
@@ -88,7 +88,7 @@ describe('AddReplyUseCase', () => {
     });
 
     // Action & Assert
-    expect(addReplyUseCase.execute({
+    await expect(addReplyUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       commentId: 'comment-123',

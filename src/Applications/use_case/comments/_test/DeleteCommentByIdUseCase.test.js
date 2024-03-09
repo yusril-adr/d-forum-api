@@ -39,7 +39,7 @@ describe('DeleteCommentByIdUseCase', () => {
     });
 
     // Action & Assert
-    expect(deleteCommentByIdUseCase.execute({
+    await expect(deleteCommentByIdUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       commentId: 'comment-123',
@@ -67,11 +67,49 @@ describe('DeleteCommentByIdUseCase', () => {
     });
 
     // Action & Assert
-    expect(deleteCommentByIdUseCase.execute({
+    await expect(deleteCommentByIdUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       commentId: 'comment-123',
     })).rejects.toThrow(Error);
+    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
+  });
+
+  it('should throw error when user id is not the owner', async () => {
+    // Arrange
+    const expectedDate = new Date();
+    const mockComment = new Comment({
+      id: 'comment-123',
+      content: 'content',
+      owner: 'user-123',
+      thread: 'thread-123',
+      date: expectedDate,
+    });
+
+    /** creating dependency of use case */
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+
+    /** mocking needed function */
+    mockThreadRepository.getThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockCommentRepository.getCommentById = jest.fn()
+      .mockImplementation(() => Promise.resolve(mockComment));
+    mockCommentRepository.deleteCommentById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+
+    /** creating use case instance */
+    const deleteCommentByIdUseCase = new DeleteCommentByIdUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+    });
+
+    // Action & Assert
+    await expect(deleteCommentByIdUseCase.execute({
+      userId: 'not the owner',
+      threadId: 'thread-123',
+      commentId: 'comment-123',
+    })).rejects.toThrow('DELETE_COMMENT_USECASE.NOT_AUTHORIZED');
     expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
   });
 

@@ -3,6 +3,7 @@ class Reply {
     this.id = payload.id;
     this.content = payload.content;
     this.owner = payload.owner;
+    this.username = payload.username;
     this.parent = payload.parent;
     this.date = payload.date || new Date();
     this.isDeleted = payload.isDeleted || false;
@@ -15,6 +16,7 @@ class Reply {
       id,
       content,
       owner,
+      username,
       parent,
       createdAt = new Date(),
       isDeleted = false,
@@ -28,6 +30,7 @@ class Reply {
       typeof id !== 'string'
       || typeof content !== 'string'
       || typeof owner !== 'string'
+      || (username && (typeof username !== 'string'))
       || typeof parent !== 'string'
       || !(createdAt instanceof Date)
       || typeof isDeleted !== 'boolean'
@@ -46,17 +49,6 @@ class Reply {
     }
 
     return this.owner === userId;
-  }
-
-  set username(username) {
-    if (typeof username !== 'string') {
-      throw new Error('REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
-    }
-    this._username = username;
-  }
-
-  get username() {
-    return this._username;
   }
 }
 

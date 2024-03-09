@@ -44,7 +44,7 @@ describe('AddCommentUseCase', () => {
     });
 
     // Action & Assert
-    expect(addCommentUseCase.execute({
+    await expect(addCommentUseCase.execute({
       userId: 'user-123',
       threadId: 'thread-123',
       useCasePayload,

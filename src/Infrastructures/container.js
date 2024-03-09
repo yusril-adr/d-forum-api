@@ -28,9 +28,11 @@ const ThreadRepositoryPostgres = require('./repository/ThreadRepositoryPostgres'
 
 const CommentRepository = require('../Domains/comments/CommentRepository');
 const CommentRepositoryPostgres = require('./repository/CommentRepositoryPostgres');
+const Comment = require('../Domains/comments/entities/Comment');
 
 const ReplyRepository = require('../Domains/replies/ReplyRepository');
 const ReplyRepositoryPostgres = require('./repository/ReplyRepositoryPostgres');
+const Reply = require('../Domains/replies/entities/Reply');
 
 // use case
 const AddUserUseCase = require('../Applications/use_case/users/AddUserUseCase');
@@ -270,6 +272,22 @@ container.register([
         {
           name: 'threadRepository',
           internal: ThreadRepository.name,
+        },
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name,
+        },
+        {
+          name: 'replyRepository',
+          internal: ReplyRepository.name,
+        },
+        {
+          name: 'Comment',
+          concrete: Comment,
+        },
+        {
+          name: 'Reply',
+          concrete: Reply,
         },
       ],
     },

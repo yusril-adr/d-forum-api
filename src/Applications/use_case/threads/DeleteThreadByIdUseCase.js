@@ -5,7 +5,9 @@ class DeleteThreadById {
 
   async execute(userId, threadId) {
     const thread = await this._threadRepository.getThreadById(threadId);
-    thread.verifyOwner(userId);
+    if (!thread.verifyOwner(userId)) {
+      throw new Error('DELETE_THREAD_USECASE.NOT_AUTHORIZED');
+    }
     return this._threadRepository.deleteThreadById(threadId);
   }
 }

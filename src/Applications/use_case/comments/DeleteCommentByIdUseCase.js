@@ -11,7 +11,9 @@ class DeleteCommentByIdUseCase {
   }) {
     await this._threadRepository.getThreadById(threadId);
     const comment = await this._commentRepository.getCommentById(commentId);
-    comment.verifyOwner(userId);
+    if (!comment.verifyOwner(userId)) {
+      throw new Error('DELETE_COMMENT_USECASE.NOT_AUTHORIZED');
+    }
     return this._commentRepository.deleteCommentById(commentId);
   }
 }

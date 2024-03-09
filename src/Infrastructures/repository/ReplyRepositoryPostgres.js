@@ -45,7 +45,8 @@ class ReplyRepositoryPostgres extends ReplyRepository {
           replies.owner,
           replies.parent,
           users.username,
-          replies."createdAt" as date
+          replies."createdAt" as date,
+          replies."isDeleted"
         FROM replies
         JOIN users
         ON replies.owner = users.id
@@ -61,11 +62,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
       return [];
     }
 
-    return result.rows.map((reply) => {
-      const res = new Reply(reply);
-      res.username = reply.username;
-      return res;
-    });
+    return result.rows.map((reply) => new Reply(reply));
   }
 
   async getReplyById(replyId) {
@@ -77,7 +74,8 @@ class ReplyRepositoryPostgres extends ReplyRepository {
         replies.owner,
         replies.parent,
         users.username,
-        replies."createdAt" as date
+        replies."createdAt" as date,
+        replies."isDeleted"
       FROM replies
       JOIN users
       ON replies.owner = users.id
@@ -94,7 +92,6 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     }
 
     const reply = new Reply(result.rows[0]);
-    reply.username = result.rows[0].username;
 
     return reply;
   }
