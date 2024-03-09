@@ -31,7 +31,7 @@ describe('AddThreadUseCase', () => {
       title: useCasePayload.title,
       body: useCasePayload.body,
       owner: 'user-123',
-      createdAt: expectedDate,
+      date: expectedDate,
     });
 
     /** creating dependency of use case */
@@ -56,7 +56,7 @@ describe('AddThreadUseCase', () => {
       title: useCasePayload.title,
       body: useCasePayload.body,
       owner: 'user-123',
-      createdAt: expectedDate,
+      date: expectedDate,
     }));
 
     expect(mockThreadRepository.addThread).toHaveBeenCalledWith({

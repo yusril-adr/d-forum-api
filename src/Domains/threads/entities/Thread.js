@@ -4,7 +4,7 @@ class Thread {
     this.title = payload.title;
     this.body = payload.body;
     this.owner = payload.owner;
-    this.createdAt = payload.createdAt || new Date();
+    this.date = payload.date || new Date();
     this.isDeleted = payload.isDeleted || false;
 
     this._verifyPayload(payload);
@@ -16,7 +16,7 @@ class Thread {
       title,
       body,
       owner,
-      createdAt = new Date(),
+      date = new Date(),
       isDeleted = false,
     } = payload;
 
@@ -29,7 +29,7 @@ class Thread {
       || typeof title !== 'string'
       || typeof body !== 'string'
       || typeof owner !== 'string'
-      || !(createdAt instanceof Date)
+      || !(date instanceof Date)
       || typeof isDeleted !== 'boolean'
     ) {
       throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
@@ -49,10 +49,20 @@ class Thread {
     return this.owner === userId;
   }
 
+  set username(username) {
+    if (typeof username !== 'string') {
+      throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    }
+    this._username = username;
+  }
+
+  get username() {
+    return this._username;
+  }
+
   /*
     TODO:
       - Add get detailedThread
-        - Alias owner into username
         - Populate comments and replies
       - Add set comments with each item is instance of Comment
   */

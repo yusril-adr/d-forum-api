@@ -11,19 +11,19 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async addThread(thread) {
     const {
-      title, body, owner, createdAt,
+      title, body, owner, date,
     } = thread;
     const id = `thread-${this._idGenerator()}`;
 
     let queryText = 'INSERT INTO threads VALUES($1, $2, $3, $4';
     const queryValues = [id, title, body, owner];
 
-    if (createdAt) {
+    if (date) {
       queryText += ', $5';
-      queryValues.push(createdAt);
+      queryValues.push(date);
     }
 
-    queryText += ') RETURNING id, title, body, owner, "createdAt", "isDeleted"';
+    queryText += ') RETURNING id, title, body, owner, "createdAt" as date, "isDeleted"';
 
     const query = {
       text: queryText,
@@ -38,7 +38,21 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   async getThreads() {
     // Avoid using SELECT *
     const query = {
-      text: 'SELECT id, title, body, owner, "createdAt" FROM threads WHERE "isDeleted" = $1 ORDER BY "createdAt"',
+      text: `
+        SELECT
+          threads.id,
+          threads.title,
+          threads.body,
+          threads.owner,
+          users.username,
+          threads."createdAt"
+        FROM threads
+        JOIN users
+        ON threads.owner = users.id
+        WHERE
+          threads."isDeleted" = $1
+        ORDER BY threads."createdAt"
+      `,
       values: [false],
     };
     const result = await this._pool.query(query);
@@ -47,12 +61,30 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       return [];
     }
 
-    return result.rows.map((thread) => new Thread(thread));
+    return result.rows.map((thread) => {
+      const res = new Thread(thread);
+      res.username = thread.username;
+      return res;
+    });
   }
 
   async getThreadById(threadId) {
     const query = {
-      text: 'SELECT id, title, body, owner, "createdAt", "isDeleted" FROM threads WHERE id = $1',
+      text: `
+      SELECT
+          threads.id,
+          threads.title,
+          threads.body,
+          threads.owner,
+          users.username,
+          threads."createdAt" as date,
+          threads."isDeleted"
+      FROM threads
+      JOIN users
+      ON threads.owner = users.id
+      WHERE
+        threads.id = $1
+      `,
       values: [threadId],
     };
 
@@ -63,6 +95,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     }
 
     const thread = new Thread(result.rows[0]);
+    thread.username = result.rows[0].username;
 
     return thread;
   }

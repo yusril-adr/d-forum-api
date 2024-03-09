@@ -16,6 +16,12 @@ exports.up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
+    owner: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      references: 'users',
+      onDelete: 'cascade',
+    },
     createdAt: {
       type: 'timestamp',
       notNull: true,
@@ -24,12 +30,6 @@ exports.up = (pgm) => {
     isDeleted: {
       type: 'BOOLEAN',
       default: false,
-    },
-    owner: {
-      type: 'VARCHAR(50)',
-      notNull: true,
-      references: 'users',
-      onDelete: 'cascade',
     },
   });
 

@@ -18,7 +18,7 @@ describe('Thread entities', () => {
       title: 'someTitle',
       body: 'someBody',
       owner: 'someOwner',
-      createdAt: 'invalidDate',
+      date: 'invalidDate',
     };
 
     // Action & Assert
@@ -39,8 +39,26 @@ describe('Thread entities', () => {
 
     // Assert
     expect(thread).toBeInstanceOf(Thread);
-    expect(thread.accessToken).toEqual(payload.accessToken);
-    expect(thread.refreshToken).toEqual(payload.refreshToken);
+    expect(thread.id).toEqual(payload.id);
+    expect(thread.title).toEqual(payload.title);
+  });
+
+  it('should hide title and body content when thread is deleted', () => {
+    // Arrange
+    const payload = {
+      id: 'someId',
+      title: 'someTitle',
+      body: 'someBody',
+      owner: 'validOwner',
+      isDeleted: true,
+    };
+
+    // Action
+    const thread = new Thread(payload);
+
+    //  Assert
+    expect(thread.title).not.toEqual('someTitle');
+    expect(thread.body).not.toEqual('someBody');
   });
 
   describe('verifyOwner', () => {
@@ -76,23 +94,40 @@ describe('Thread entities', () => {
       expect(thread.verifyOwner('notTheOwner')).toBeFalsy();
       expect(thread.verifyOwner('validOwner')).toBeTruthy();
     });
+  });
 
-    it('should hide title and body content when thread is deleted', () => {
+  describe('username props', () => {
+    it('should throw error when payload not meet data type specification', () => {
       // Arrange
       const payload = {
         id: 'someId',
         title: 'someTitle',
         body: 'someBody',
         owner: 'validOwner',
-        isDeleted: true,
       };
 
       // Action
       const thread = new Thread(payload);
 
       //  Assert
-      expect(thread.title).not.toEqual('someTitle');
-      expect(thread.body).not.toEqual('someBody');
+      expect(() => { thread.username = 123; }).toThrow('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    });
+
+    it('should return username value', () => {
+      // Arrange
+      const payload = {
+        id: 'someId',
+        title: 'someTitle',
+        body: 'someBody',
+        owner: 'validOwner',
+      };
+
+      // Action
+      const thread = new Thread(payload);
+      thread.username = 'someUsername';
+
+      //  Assert
+      expect(thread.username).toEqual('someUsername');
     });
   });
 });

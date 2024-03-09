@@ -26,7 +26,7 @@ describe('ThreadRepository postgres', () => {
         title: 'thread title',
         body: 'thread body',
         owner: 'user-123',
-        createdAt: new Date(),
+        date: new Date(),
       };
       const fakeIdGenerator = () => '123';
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
@@ -40,14 +40,14 @@ describe('ThreadRepository postgres', () => {
     });
 
     it('should return created thread correctly', async () => {
-      const createdAt = new Date();
+      const date = new Date();
       // Arrange
       const newThread = new Thread({
         id: 'thread-123',
         title: 'thread title',
         body: 'thread body',
         owner: 'user-123',
-        createdAt,
+        date,
       });
       const fakeIdGenerator = () => '123'; // stub!
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
@@ -61,11 +61,11 @@ describe('ThreadRepository postgres', () => {
         title: 'thread title',
         body: 'thread body',
         owner: 'user-123',
-        createdAt,
+        date,
       }));
     });
 
-    it('should add createdAt thread correctly if not given initial value', async () => {
+    it('should add date thread correctly if not given initial value', async () => {
       // Arrange
       const newThread = {
         id: 'thread-123',
@@ -80,13 +80,13 @@ describe('ThreadRepository postgres', () => {
       const createdThread = await threadRepositoryPostgres.addThread(newThread);
 
       // Assert
-      expect(createdThread.createdAt).toBeDefined();
+      expect(createdThread.date).toBeDefined();
       expect(createdThread).toStrictEqual(new Thread({
         id: 'thread-123',
         title: 'thread title',
         body: 'thread body',
         owner: 'user-123',
-        createdAt: createdThread.createdAt,
+        date: createdThread.date,
       }));
     });
   });
