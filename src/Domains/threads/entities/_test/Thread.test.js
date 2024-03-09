@@ -1,4 +1,7 @@
 const Thread = require('../Thread');
+const Comment = require('../../../comments/entities/Comment');
+
+jest.mock('../../../comments/entities/Comment');
 
 describe('Thread entities', () => {
   it('should throw error when payload not contain needed property', () => {
@@ -128,6 +131,73 @@ describe('Thread entities', () => {
 
       //  Assert
       expect(thread.username).toEqual('someUsername');
+    });
+  });
+
+  describe('initiateComments', () => {
+    it('should throw error when payload not contain needed property', () => {
+      // Arrange
+      const payload = {
+        id: 'thread-123',
+        title: 'someTitle',
+        body: 'someBody',
+        owner: 'ownerId',
+      };
+
+      // Action
+      const thread = new Thread(payload);
+
+      // Assert
+      expect(() => thread.initiateComments([])).toThrow('THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+    });
+
+    it('should throw error when payload not meet data type specification', () => {
+      // Arrange
+      const payload = {
+        id: 'thread-123',
+        title: 'someTitle',
+        body: 'someBody',
+        owner: 'ownerId',
+      };
+
+      // Action
+      const thread = new Thread(payload);
+      thread.Comment = Comment;
+
+      // Assert
+      expect(() => thread.initiateComments([1, 2])).toThrow('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    });
+
+    it('should be able initiateComments properly', () => {
+      // Arrange
+      const payload = {
+        id: 'thread-123',
+        title: 'someTitle',
+        body: 'someBody',
+        owner: 'ownerId',
+      };
+
+      const mockComment1 = new Comment({
+        id: 'comment-1', content: 'content', owner: 'owner', thread: 'thread-123',
+      });
+      const mockComment2 = new Comment({
+        id: 'comment-1', content: 'content', owner: 'owner', thread: 'thread-123',
+      });
+
+      const mockComments = [
+        mockComment1,
+        mockComment2,
+      ];
+
+      // Action
+      const thread = new Thread(payload);
+      thread.Comment = Comment;
+      thread.initiateComments(mockComments);
+
+      // Assert
+      expect(thread.comments).toHaveLength(2);
+      expect(thread.comments[0]).toStrictEqual(mockComment1);
+      expect(thread.comments[1]).toStrictEqual(mockComment2);
     });
   });
 });

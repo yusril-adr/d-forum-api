@@ -11,7 +11,9 @@
     "test:watchAll": "jest --watchAll --runInBand --detectOpenHandles --coverage --setupFiles dotenv/config",
     "migrate": "node-pg-migrate",
     "migrate:test": "node-pg-migrate --envPath .test.env",
-    "prettier": "npx prettier . --write"
+    "prettier": "npx prettier . --write",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",

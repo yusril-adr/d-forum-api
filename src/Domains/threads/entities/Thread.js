@@ -6,6 +6,8 @@ class Thread {
     this.owner = payload.owner;
     this.date = payload.date || new Date();
     this.isDeleted = payload.isDeleted || false;
+    this.Comment = undefined;
+    this.comments = [];
 
     this._verifyPayload(payload);
   }
@@ -60,12 +62,24 @@ class Thread {
     return this._username;
   }
 
-  /*
-    TODO:
-      - Add get detailedThread
-        - Populate comments and replies
-      - Add set comments with each item is instance of Comment
-  */
+  initiateComments(comments) {
+    if (!this.Comment) {
+      throw new Error('THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+    }
+
+    let instanceValid = true;
+    comments.forEach((comment) => {
+      if (!(comment instanceof this.Comment)) {
+        instanceValid = false;
+      }
+    });
+
+    if (!instanceValid) {
+      throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    }
+
+    this.comments = comments;
+  }
 }
 
 module.exports = Thread;

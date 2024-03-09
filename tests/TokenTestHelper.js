@@ -1,9 +1,4 @@
-const getToken = async (server) => {
-  const userPayload = {
-    username: 'dicoding',
-    password: 'secret',
-  };
-
+exports.initUser = async (server) => {
   const userResponse = await server.inject({
     method: 'POST',
     url: '/users',
@@ -14,6 +9,16 @@ const getToken = async (server) => {
     },
   });
   const userResponseJson = JSON.parse(userResponse.payload);
+  return {
+    userId: userResponseJson.data.addedUser.id,
+  };
+};
+
+exports.getToken = async (server) => {
+  const userPayload = {
+    username: 'dicoding',
+    password: 'secret',
+  };
 
   const response = await server.inject({
     method: 'POST',
@@ -26,8 +31,5 @@ const getToken = async (server) => {
   return {
     accessToken: responseJson.data.accessToken,
     refreshToken: responseJson.data.refreshToken,
-    userId: userResponseJson.data.addedUser.id,
   };
 };
-
-module.exports = getToken;

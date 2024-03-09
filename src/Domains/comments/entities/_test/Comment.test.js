@@ -1,7 +1,7 @@
 const Comment = require('../Comment');
 const Reply = require('../../../replies/entities/Reply');
 
-jest.mock('../../../replies/entities/Reply.js');
+jest.mock('../../../replies/entities/Reply');
 
 describe('Comment entities', () => {
   it('should throw error when payload not contain needed property', () => {

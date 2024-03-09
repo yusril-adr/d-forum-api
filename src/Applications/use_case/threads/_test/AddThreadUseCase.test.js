@@ -23,7 +23,16 @@ describe('AddThreadUseCase', () => {
     };
 
     const fakeValidator = {
-      validate: (_, payload) => payload,
+      validate: (schema, payload) => {
+        const fakeValidatorHandler = {
+          object: () => {},
+          string: () => ({
+            required: () => {},
+          }),
+        };
+        schema(fakeValidatorHandler);
+        return payload;
+      },
     };
 
     const mockThread = new Thread({
