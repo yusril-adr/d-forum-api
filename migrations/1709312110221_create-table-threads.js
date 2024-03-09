@@ -16,12 +16,6 @@ exports.up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
-    owner: {
-      type: 'VARCHAR(50)',
-      notNull: true,
-      references: 'users',
-      onDelete: 'cascade',
-    },
     createdAt: {
       type: 'timestamp',
       notNull: true,
@@ -31,12 +25,18 @@ exports.up = (pgm) => {
       type: 'BOOLEAN',
       default: false,
     },
+    owner: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      references: 'users',
+      onDelete: 'cascade',
+    },
   });
 
-  pgm.addConstraint('threads', 'fk_threads.userId__users.id', 'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE');
+  pgm.addConstraint('threads', 'fk_threads.owner__users.id', 'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE');
 };
 
 exports.down = (pgm) => {
-  pgm.dropConstraint('threads', 'fk_threads.userId__users.id');
+  pgm.dropConstraint('threads', 'fk_threads.owner__users.id');
   pgm.dropTable('threads');
 };
