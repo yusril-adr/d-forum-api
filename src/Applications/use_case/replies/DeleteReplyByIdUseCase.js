@@ -11,8 +11,8 @@ class DeleteReplyByIdUseCase {
     commentId,
     replyId,
   }) {
-    await this._threadRepository.getThreadById(threadId);
-    await this._commentRepository.getCommentById(commentId);
+    await this._threadRepository.verifyThreadAvailability(threadId);
+    await this._commentRepository.verifyCommentAvailability(commentId);
     const reply = await this._replyRepository.getReplyById(replyId);
     if (!reply.verifyOwner(userId)) {
       throw new Error('DELETE_REPLY_USECASE.NOT_AUTHORIZED');

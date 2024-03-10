@@ -1,19 +1,8 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
 const Thread = require('../../../../Domains/threads/entities/Thread');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const DeleteThreadByIdUseCase = require('../DeleteThreadByIdUseCase');
-const pool = require('../../../../Infrastructures/database/postgres/pool');
 
 describe('DeleteThreadByIdUseCase', () => {
-  beforeAll(async () => {
-    await UsersTableTestHelper.addUser({ id: 'user-123' });
-  });
-
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await pool.end();
-  });
-
   it('should throw error when user id is not the owner', async () => {
     // Arrange
     const expectedDate = new Date();
@@ -22,7 +11,7 @@ describe('DeleteThreadByIdUseCase', () => {
       title: 'title-1',
       body: 'body-1',
       owner: 'user-123',
-      createdAt: expectedDate,
+      date: expectedDate,
     });
 
     /** creating dependency of use case */
@@ -56,7 +45,7 @@ describe('DeleteThreadByIdUseCase', () => {
       title: 'title-1',
       body: 'body-1',
       owner: 'user-123',
-      createdAt: expectedDate,
+      date: expectedDate,
     });
 
     /** creating dependency of use case */

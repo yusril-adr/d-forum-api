@@ -16,7 +16,7 @@ describe('Reply entities', () => {
     const payload = {
       id: 'someId',
       content: 'someContent',
-      createdAt: 'invalidDate',
+      date: 'invalidDate',
       owner: 'someOwner',
       username: 123,
       parent: 'someComment',
@@ -40,8 +40,10 @@ describe('Reply entities', () => {
 
     // Assert
     expect(reply).toBeInstanceOf(Reply);
-    expect(reply.id).toEqual(payload.id);
-    expect(reply.content).toEqual(payload.content);
+    expect(reply.id).toEqual('someId');
+    expect(reply.content).toEqual('someContent');
+    expect(reply.owner).toEqual('someOwner');
+    expect(reply.parent).toEqual('someParent');
   });
 
   it('should hide content when reply is deleted', () => {

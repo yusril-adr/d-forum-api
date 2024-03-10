@@ -1,19 +1,8 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
 const Thread = require('../../../../Domains/threads/entities/Thread');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const AddThreadUseCase = require('../AddThreadUseCase');
-const pool = require('../../../../Infrastructures/database/postgres/pool');
 
 describe('AddThreadUseCase', () => {
-  beforeAll(async () => {
-    await UsersTableTestHelper.addUser({ id: 'user-123' });
-  });
-
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await pool.end();
-  });
-
   it('should orchestrating the add thread action correctly', async () => {
     // Arrange
     const expectedDate = new Date();

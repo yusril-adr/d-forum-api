@@ -20,8 +20,8 @@ class AddReplyUseCase {
     commentId,
     useCasePayload,
   }) {
-    await this._threadRepository.getThreadById(threadId);
-    await this._commentRepository.getCommentById(commentId);
+    await this._threadRepository.verifyThreadAvailability(threadId);
+    await this._commentRepository.verifyCommentAvailability(commentId);
 
     const validatedPayload = this._validator.validate(this.schema, useCasePayload);
     const replyPayload = {

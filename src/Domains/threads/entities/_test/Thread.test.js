@@ -43,8 +43,10 @@ describe('Thread entities', () => {
 
     // Assert
     expect(thread).toBeInstanceOf(Thread);
-    expect(thread.id).toEqual(payload.id);
-    expect(thread.title).toEqual(payload.title);
+    expect(thread.id).toEqual('someId');
+    expect(thread.title).toEqual('someTitle');
+    expect(thread.body).toEqual('someBody');
+    expect(thread.owner).toEqual('someOwner');
   });
 
   it('should hide title and body content when thread is deleted', () => {

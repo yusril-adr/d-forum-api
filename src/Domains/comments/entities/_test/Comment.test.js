@@ -19,7 +19,7 @@ describe('Comment entities', () => {
     const payload = {
       id: 'someId',
       content: 'someContent',
-      createdAt: 'invalidDate',
+      date: 'invalidDate',
       owner: 'someOwner',
       username: 123,
       thread: 'someThread',
@@ -43,8 +43,10 @@ describe('Comment entities', () => {
 
     // Assert
     expect(comment).toBeInstanceOf(Comment);
-    expect(comment.id).toEqual(payload.id);
-    expect(comment.content).toEqual(payload.content);
+    expect(comment.id).toEqual('someId');
+    expect(comment.content).toEqual('someContent');
+    expect(comment.owner).toEqual('someOwner');
+    expect(comment.thread).toEqual('someThread');
   });
 
   it('should hide content when comment is deleted', () => {

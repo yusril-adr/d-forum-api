@@ -1,19 +1,8 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
 const Thread = require('../../../../Domains/threads/entities/Thread');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const GetThreadsUseCase = require('../GetThreadsUseCase');
-const pool = require('../../../../Infrastructures/database/postgres/pool');
 
 describe('GetThreadsUseCase', () => {
-  beforeAll(async () => {
-    await UsersTableTestHelper.addUser({ id: 'user-123' });
-  });
-
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await pool.end();
-  });
-
   it('should orchestrating get threads action correctly', async () => {
     // Arrange
     const expectedDate = new Date();
@@ -23,14 +12,14 @@ describe('GetThreadsUseCase', () => {
       title: 'title-1',
       body: 'body-1',
       owner: 'user-123',
-      createdAt: expectedDate,
+      date: expectedDate,
     });
     const mockThread2 = new Thread({
       id: 'thread-2',
       title: 'title-2',
       body: 'body-2',
       owner: 'user-123',
-      createdAt: expectedDate,
+      date: expectedDate,
     });
 
     /** creating dependency of use case */

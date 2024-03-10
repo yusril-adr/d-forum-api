@@ -96,6 +96,25 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     return thread;
   }
 
+  async verifyThreadAvailability(threadId) {
+    const query = {
+      text: `
+      SELECT
+        COUNT(1)
+      FROM threads
+      WHERE
+        threads.id = $1
+    `,
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rows[0].count < 1) {
+      throw new NotFoundError('thread not found');
+    }
+  }
+
   async deleteThreadById(threadId) {
     const query = {
       text: 'UPDATE threads SET "isDeleted" = $1 WHERE id = $2',

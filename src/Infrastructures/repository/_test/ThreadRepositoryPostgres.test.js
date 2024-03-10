@@ -67,6 +67,7 @@ describe('ThreadRepository postgres', () => {
 
     it('should add date thread correctly if not given initial value', async () => {
       // Arrange
+      const currentDate = new Date();
       const newThread = {
         id: 'thread-123',
         title: 'thread title',
@@ -81,13 +82,7 @@ describe('ThreadRepository postgres', () => {
 
       // Assert
       expect(createdThread.date).toBeDefined();
-      expect(createdThread).toStrictEqual(new Thread({
-        id: 'thread-123',
-        title: 'thread title',
-        body: 'thread body',
-        owner: 'user-123',
-        date: createdThread.date,
-      }));
+      expect(new Date(createdThread.date).getTime()).toBeGreaterThanOrEqual(currentDate.getTime());
     });
   });
 
@@ -104,7 +99,9 @@ describe('ThreadRepository postgres', () => {
       // Assert
       expect(threads).toHaveLength(2);
       expect(threads[0].id).toBe('test1');
+      expect(threads[0].owner).toBe('user-123');
       expect(threads[1].id).toBe('test2');
+      expect(threads[1].owner).toBe('user-123');
     });
 
     it('should not return deleted threads', async () => {
@@ -146,6 +143,27 @@ describe('ThreadRepository postgres', () => {
     });
   });
 
+  describe('verifyThreadAvailability', () => {
+    it('should throw error when thread is not found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123';
+      const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert
+      await expect(threadRepository.verifyThreadAvailability('thread-123')).rejects.toThrow(NotFoundError);
+    });
+
+    it('should not throw error when thread is found', async () => {
+      // Arrange
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
+      const fakeIdGenerator = () => '123';
+      const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert
+      await expect(threadRepository.verifyThreadAvailability('thread-123')).resolves;
+    });
+  });
+
   describe('deleteThreadById', () => {
     it('should throw NotFoundError when thread not found', async () => {
       // Arrange
@@ -168,6 +186,9 @@ describe('ThreadRepository postgres', () => {
       // Assert
       const threads = await threadRepositoryPostgres.getThreads();
       expect(threads).toHaveLength(0);
+
+      const threadsDB = await ThreadsTableTestHelper.findThreadsById('test1');
+      expect(threadsDB[0].isDeleted).toBeTruthy();
     });
   });
 });

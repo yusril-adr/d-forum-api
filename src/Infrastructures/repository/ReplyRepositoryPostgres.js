@@ -96,6 +96,25 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return reply;
   }
 
+  async verifyReplyAvailability(replyId) {
+    const query = {
+      text: `
+      SELECT
+        COUNT(1)
+      FROM replies
+      WHERE
+        replies.id = $1
+    `,
+      values: [replyId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rows[0].count < 1) {
+      throw new NotFoundError('reply not found');
+    }
+  }
+
   async deleteReplyById(replyId) {
     const query = {
       text: 'UPDATE replies SET "isDeleted" = $1 WHERE id = $2',

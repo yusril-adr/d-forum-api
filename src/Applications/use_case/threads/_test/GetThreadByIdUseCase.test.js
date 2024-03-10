@@ -1,7 +1,3 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
-const ThreadsTableTestHelper = require('../../../../../tests/ThreadsTableTestHelper');
-const CommentsTableTestHelper = require('../../../../../tests/CommentsTableTestHelper');
-const RepliesTableTestHelper = require('../../../../../tests/RepliesTableTestHelper');
 const Thread = require('../../../../Domains/threads/entities/Thread');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const Comment = require('../../../../Domains/comments/entities/Comment');
@@ -9,34 +5,19 @@ const CommentRepository = require('../../../../Domains/comments/CommentRepositor
 const Reply = require('../../../../Domains/replies/entities/Reply');
 const ReplyRepository = require('../../../../Domains/replies/ReplyRepository');
 const GetThreadByIdUseCase = require('../GetThreadByIdUseCase');
-const pool = require('../../../../Infrastructures/database/postgres/pool');
 
 describe('GetThreadByIdUseCase', () => {
-  beforeAll(async () => {
-    await UsersTableTestHelper.addUser({ id: 'user-123' });
-    await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
-    await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-123', thread: 'thread-123' });
-    await RepliesTableTestHelper.addReply({ id: 'reply-123', owner: 'user-123', parent: 'comment-123' });
-  });
-
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await ThreadsTableTestHelper.cleanTable();
-    await CommentsTableTestHelper.cleanTable();
-    await RepliesTableTestHelper.cleanTable();
-    await pool.end();
-  });
-
   it('should orchestrating get thread by id action correctly', async () => {
     // Arrange
-    const expectedDate = new Date();
+    const currentDate = new Date();
+    const expectedDate = new Date(currentDate);
 
     const mockThread = new Thread({
       id: 'thread-123',
       title: 'title-1',
       body: 'body-1',
       owner: 'user-123',
-      createdAt: expectedDate,
+      date: currentDate,
     });
 
     const mockComment = new Comment({
@@ -44,7 +25,7 @@ describe('GetThreadByIdUseCase', () => {
       content: 'comment content',
       owner: 'user-123',
       thread: 'thread-123',
-      date: expectedDate,
+      date: currentDate,
     });
 
     const mockReply = new Reply({
@@ -52,7 +33,7 @@ describe('GetThreadByIdUseCase', () => {
       content: 'reply content',
       owner: 'user-123',
       parent: 'comment-123',
-      date: expectedDate,
+      date: currentDate,
     });
 
     /** creating dependency of use case */
@@ -77,11 +58,43 @@ describe('GetThreadByIdUseCase', () => {
       Reply,
     });
 
+    // Expected values
+    const expectedThread = new Thread({
+      id: 'thread-123',
+      title: 'title-1',
+      body: 'body-1',
+      owner: 'user-123',
+      date: expectedDate,
+    });
+
+    const expectedComment = new Comment({
+      id: 'comment-123',
+      content: 'comment content',
+      owner: 'user-123',
+      thread: 'thread-123',
+      date: expectedDate,
+    });
+
+    const expectedReply = new Reply({
+      id: 'reply-123',
+      content: 'reply content',
+      owner: 'user-123',
+      parent: 'comment-123',
+      date: expectedDate,
+    });
+
+    expectedComment.Reply = Reply;
+    expectedComment.replies = [expectedReply];
+    expectedThread.Comment = Comment;
+    expectedThread.comments = [expectedComment];
+
     // Action
     const thread = await getThreadByIdUseCase.execute('thread-123');
 
     // Assert
-    expect(thread).toStrictEqual(mockThread);
+    expect(thread).toStrictEqual(expectedThread);
     expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentsByThreadId).toHaveBeenCalledWith('thread-123');
+    expect(mockReplyRepository.getRepliesByCommentId).toHaveBeenCalledWith('comment-123');
   });
 });

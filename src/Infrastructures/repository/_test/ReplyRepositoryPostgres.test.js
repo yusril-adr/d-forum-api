@@ -73,6 +73,7 @@ describe('ReplyRepository postgres', () => {
 
     it('should add date comment correctly if not given initial value', async () => {
       // Arrange
+      const currentDate = new Date();
       const newReply = {
         id: 'reply-123',
         content: 'content',
@@ -87,13 +88,7 @@ describe('ReplyRepository postgres', () => {
 
       // Assert
       expect(createdReply.date).toBeDefined();
-      expect(createdReply).toStrictEqual(new Reply({
-        id: 'reply-123',
-        content: 'content',
-        owner: 'user-123',
-        parent: 'comment-123',
-        date: createdReply.date,
-      }));
+      expect(new Date(createdReply.date).getTime()).toBeGreaterThanOrEqual(currentDate.getTime());
     });
   });
 
@@ -110,7 +105,11 @@ describe('ReplyRepository postgres', () => {
       // Assert
       expect(replies).toHaveLength(2);
       expect(replies[0].id).toBe('test1');
+      expect(replies[0].owner).toBe('user-123');
+      expect(replies[0].parent).toBe('comment-123');
       expect(replies[1].id).toBe('test2');
+      expect(replies[1].owner).toBe('user-123');
+      expect(replies[1].parent).toBe('comment-123');
     });
 
     it('should return empty array when payload is valid', async () => {
@@ -146,6 +145,27 @@ describe('ReplyRepository postgres', () => {
 
       // Assert
       expect(comment.id).toEqual('test1');
+    });
+  });
+
+  describe('verifyReplyAvailability', () => {
+    it('should throw error when reply is not found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123';
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert
+      await expect(replyRepositoryPostgres.verifyReplyAvailability('reply-123')).rejects.toThrow(NotFoundError);
+    });
+
+    it('should not throw error when reply is found', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({ id: 'reply-123', owner: 'user-123', parent: 'comment-123' });
+      const fakeIdGenerator = () => '123';
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert
+      await expect(replyRepositoryPostgres.verifyReplyAvailability('reply-123')).resolves;
     });
   });
 

@@ -1,27 +1,10 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
-const ThreadsTableTestHelper = require('../../../../../tests/ThreadsTableTestHelper');
-const CommentsTableTestHelper = require('../../../../../tests/CommentsTableTestHelper');
 const Reply = require('../../../../Domains/replies/entities/Reply');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../../Domains/comments/CommentRepository');
 const ReplyRepository = require('../../../../Domains/replies/ReplyRepository');
 const DeleteReplyByIdUseCase = require('../DeleteReplyByIdUseCase');
-const pool = require('../../../../Infrastructures/database/postgres/pool');
 
 describe('DeleteReplyByIdUseCase', () => {
-  beforeAll(async () => {
-    await UsersTableTestHelper.addUser({ id: 'user-123' });
-    await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
-    await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-123', thread: 'thread-123' });
-  });
-
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await ThreadsTableTestHelper.cleanTable();
-    await CommentsTableTestHelper.cleanTable();
-    await pool.end();
-  });
-
   it('should throw error when thread is not found', async () => {
     // Arrange
     /** creating dependency of use case */
@@ -30,7 +13,7 @@ describe('DeleteReplyByIdUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
 
     /** creating use case instance */
@@ -57,9 +40,9 @@ describe('DeleteReplyByIdUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.getCommentById = jest.fn()
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
 
     /** creating use case instance */
@@ -76,7 +59,7 @@ describe('DeleteReplyByIdUseCase', () => {
       commentId: 'comment-123',
       replyId: 'reply-123',
     })).rejects.toThrow(Error);
-    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
   });
 
   it('should throw error when reply is not found', async () => {
@@ -87,9 +70,9 @@ describe('DeleteReplyByIdUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.getCommentById = jest.fn()
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockReplyRepository.getReplyById = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
@@ -108,8 +91,8 @@ describe('DeleteReplyByIdUseCase', () => {
       commentId: 'comment-123',
       replyId: 'reply-123',
     })).rejects.toThrow(Error);
-    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
-    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
   });
 
   it('should throw error when user id is not the owner', async () => {
@@ -127,9 +110,9 @@ describe('DeleteReplyByIdUseCase', () => {
     });
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.getCommentById = jest.fn()
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockReplyRepository.getReplyById = jest.fn()
       .mockImplementation(() => Promise.resolve(mockReply));
@@ -152,12 +135,12 @@ describe('DeleteReplyByIdUseCase', () => {
     })).rejects.toThrow('DELETE_REPLY_USECASE.NOT_AUTHORIZED');
 
     // Assert
-    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
-    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
     expect(mockReplyRepository.getReplyById).toHaveBeenCalledWith('reply-123');
   });
 
-  it('should orchestrating delete comment by id action correctly', async () => {
+  it('should orchestrating delete reply by id action correctly', async () => {
     // Arrange
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
@@ -172,9 +155,9 @@ describe('DeleteReplyByIdUseCase', () => {
     });
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.getCommentById = jest.fn()
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockReplyRepository.getReplyById = jest.fn()
       .mockImplementation(() => Promise.resolve(mockReply));
@@ -197,8 +180,8 @@ describe('DeleteReplyByIdUseCase', () => {
     });
 
     // Assert
-    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
-    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
     expect(mockReplyRepository.getReplyById).toHaveBeenCalledWith('reply-123');
     expect(mockReplyRepository.deleteReplyById).toHaveBeenCalledWith('reply-123');
   });

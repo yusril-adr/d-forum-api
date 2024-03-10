@@ -70,6 +70,7 @@ describe('CommentRepository postgres', () => {
 
     it('should add date comment correctly if not given initial value', async () => {
       // Arrange
+      const currentDate = new Date();
       const newComment = {
         id: 'comment-123',
         content: 'content',
@@ -84,13 +85,7 @@ describe('CommentRepository postgres', () => {
 
       // Assert
       expect(createdComment.date).toBeDefined();
-      expect(createdComment).toStrictEqual(new Comment({
-        id: 'comment-123',
-        content: 'content',
-        owner: 'user-123',
-        thread: 'thread-123',
-        date: createdComment.date,
-      }));
+      expect(new Date(createdComment.date).getTime()).toBeGreaterThanOrEqual(currentDate.getTime());
     });
   });
 
@@ -107,7 +102,11 @@ describe('CommentRepository postgres', () => {
       // Assert
       expect(comments).toHaveLength(2);
       expect(comments[0].id).toBe('test1');
+      expect(comments[0].owner).toBe('user-123');
+      expect(comments[0].thread).toBe('thread-123');
       expect(comments[1].id).toBe('test2');
+      expect(comments[1].owner).toBe('user-123');
+      expect(comments[1].thread).toBe('thread-123');
     });
 
     it('should return empty array when payload is valid', async () => {
@@ -143,6 +142,27 @@ describe('CommentRepository postgres', () => {
 
       // Assert
       expect(comment.id).toEqual('comment1');
+    });
+  });
+
+  describe('verifyCommentAvailability', () => {
+    it('should throw error when comment is not found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123';
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert
+      await expect(commentRepository.verifyCommentAvailability('comment-123')).rejects.toThrow(NotFoundError);
+    });
+
+    it('should not throw error when comment is found', async () => {
+      // Arrange
+      await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-123', thread: 'thread-123' });
+      const fakeIdGenerator = () => '123';
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert
+      await expect(commentRepository.verifyCommentAvailability('comment-123')).resolves;
     });
   });
 

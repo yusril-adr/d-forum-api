@@ -16,7 +16,7 @@ class AddCommentUseCase {
     threadId,
     useCasePayload,
   }) {
-    await this._threadRepository.getThreadById(threadId);
+    await this._threadRepository.verifyThreadAvailability(threadId);
 
     const validatedPayload = this._validator.validate(this.schema, useCasePayload);
     const commentPayload = {

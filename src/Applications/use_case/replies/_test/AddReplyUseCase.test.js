@@ -1,27 +1,10 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
-const ThreadsTableTestHelper = require('../../../../../tests/ThreadsTableTestHelper');
-const CommentsTableTestHelper = require('../../../../../tests/CommentsTableTestHelper');
 const Reply = require('../../../../Domains/replies/entities/Reply');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../../Domains/comments/CommentRepository');
 const ReplyRepository = require('../../../../Domains/replies/ReplyRepository');
 const AddReplyUseCase = require('../AddReplyUseCase');
-const pool = require('../../../../Infrastructures/database/postgres/pool');
 
 describe('AddReplyUseCase', () => {
-  beforeAll(async () => {
-    await UsersTableTestHelper.addUser({ id: 'user-123' });
-    await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
-    await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-123', thread: 'thread-123' });
-  });
-
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await ThreadsTableTestHelper.cleanTable();
-    await CommentsTableTestHelper.cleanTable();
-    await pool.end();
-  });
-
   it('should throw error when thread is not found', async () => {
     // Arrange
     const useCasePayload = {
@@ -38,7 +21,7 @@ describe('AddReplyUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
 
     /** creating use case instance */
@@ -74,9 +57,9 @@ describe('AddReplyUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.getCommentById = jest.fn()
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
 
     /** creating use case instance */
@@ -130,9 +113,9 @@ describe('AddReplyUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.getCommentById = jest.fn()
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockReplyRepository.addReply = jest.fn()
       .mockImplementation(() => Promise.resolve(mockReply));
@@ -162,8 +145,8 @@ describe('AddReplyUseCase', () => {
       date: expectedDate,
     }));
 
-    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
-    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
     expect(mockReplyRepository.addReply).toHaveBeenCalledWith({
       content: useCasePayload.content,
       owner: 'user-123',

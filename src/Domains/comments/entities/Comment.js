@@ -20,7 +20,7 @@ class Comment {
       owner,
       username,
       thread,
-      createdAt = new Date(),
+      date = new Date(),
       isDeleted = false,
     } = payload;
 
@@ -34,7 +34,7 @@ class Comment {
       || typeof owner !== 'string'
       || (username && (typeof username !== 'string'))
       || typeof thread !== 'string'
-      || !(createdAt instanceof Date)
+      || !(date instanceof Date)
       || typeof isDeleted !== 'boolean'
     ) {
       throw new Error('COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');

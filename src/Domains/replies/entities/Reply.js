@@ -18,7 +18,7 @@ class Reply {
       owner,
       username,
       parent,
-      createdAt = new Date(),
+      date = new Date(),
       isDeleted = false,
     } = payload;
 
@@ -32,7 +32,7 @@ class Reply {
       || typeof owner !== 'string'
       || (username && (typeof username !== 'string'))
       || typeof parent !== 'string'
-      || !(createdAt instanceof Date)
+      || !(date instanceof Date)
       || typeof isDeleted !== 'boolean'
     ) {
       throw new Error('REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');

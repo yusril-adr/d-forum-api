@@ -1,23 +1,9 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
-const ThreadsTableTestHelper = require('../../../../../tests/ThreadsTableTestHelper');
 const Comment = require('../../../../Domains/comments/entities/Comment');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../../Domains/comments/CommentRepository');
 const AddCommentUseCase = require('../AddCommentUseCase');
-const pool = require('../../../../Infrastructures/database/postgres/pool');
 
 describe('AddCommentUseCase', () => {
-  beforeAll(async () => {
-    await UsersTableTestHelper.addUser({ id: 'user-123' });
-    await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
-  });
-
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await ThreadsTableTestHelper.cleanTable();
-    await pool.end();
-  });
-
   it('should throw error when thread is not found', async () => {
     // Arrange
     const useCasePayload = {
@@ -33,7 +19,7 @@ describe('AddCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
 
     /** creating use case instance */
@@ -84,7 +70,7 @@ describe('AddCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
 
     /** mocking needed function */
-    mockThreadRepository.getThreadById = jest.fn()
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockCommentRepository.addComment = jest.fn()
       .mockImplementation(() => Promise.resolve(mockComment));
@@ -112,7 +98,7 @@ describe('AddCommentUseCase', () => {
       date: expectedDate,
     }));
 
-    expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
 
     expect(mockCommentRepository.addComment).toHaveBeenCalledWith({
       content: useCasePayload.content,
