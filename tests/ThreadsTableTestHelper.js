@@ -18,9 +18,51 @@ const ThreadsTableTestHelper = {
     await pool.query(query);
   },
 
+  async findThreads() {
+    // Avoid using SELECT *
+    const query = {
+      text: `
+        SELECT
+          threads.id,
+          threads.title,
+          threads.body,
+          threads.owner,
+          users.username,
+          threads."createdAt" as date,
+          threads."isDeleted"
+        FROM threads
+        JOIN users
+        ON threads.owner = users.id
+        ORDER BY threads."createdAt"
+      `,
+    };
+    const result = await pool.query(query);
+
+    if (!result.rowCount) {
+      return [];
+    }
+
+    return result.rows;
+  },
+
   async findThreadsById(id) {
     const query = {
-      text: 'SELECT * FROM threads WHERE id = $1',
+      text: `
+      SELECT
+        threads.id,
+        threads.title,
+        threads.body,
+        threads.owner,
+        users.username,
+        threads."createdAt" as date,
+        threads."isDeleted"
+      FROM threads
+      JOIN users
+      ON threads.owner = users.id
+      WHERE
+        threads.id = $1
+      ORDER BY threads."createdAt"
+      `,
       values: [id],
     };
 

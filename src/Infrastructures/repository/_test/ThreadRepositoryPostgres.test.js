@@ -94,29 +94,17 @@ describe('ThreadRepository postgres', () => {
       await ThreadsTableTestHelper.addThread({ id: 'test1', owner: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'test2', owner: 'user-123' });
 
+      const [expectedThread1, expectedThread2] = await ThreadsTableTestHelper.findThreads();
+
       // Action
       const threads = await threadRepositoryPostgres.getThreads();
 
       // Assert
       expect(threads).toHaveLength(2);
-      expect(threads[0].id).toBe('test1');
-      expect(threads[0].owner).toBe('user-123');
-      expect(threads[0].title).toBe('thread title');
-      expect(threads[0].body).toBe('thread body');
-      expect(threads[0].isDeleted).toBeFalsy();
-      expect(threads[0].date).toBeDefined();
-      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
-      // Because diffrent time of local test and database
-      expect(() => new Date(threads[0].date)).not.toThrow(Error);
-      expect(threads[1].id).toBe('test2');
-      expect(threads[1].owner).toBe('user-123');
-      expect(threads[1].title).toBe('thread title');
-      expect(threads[1].body).toBe('thread body');
-      expect(threads[1].isDeleted).toBeFalsy();
-      expect(threads[1].date).toBeDefined();
-      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
-      // Because diffrent time of local test and database
-      expect(() => new Date(threads[1].date)).not.toThrow(Error);
+      expect(threads).toEqual([
+        new Thread({ ...expectedThread1 }),
+        new Thread({ ...expectedThread2 }),
+      ]);
     });
 
     it('should not return deleted threads', async () => {
@@ -125,12 +113,14 @@ describe('ThreadRepository postgres', () => {
       await ThreadsTableTestHelper.addThread({ id: 'test1', owner: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'test2', owner: 'user-123', isDeleted: true });
 
+      const [expectedThread] = await ThreadsTableTestHelper.findThreadsById('test1');
+
       // Action
       const threads = await threadRepositoryPostgres.getThreads();
 
       // Assert
       expect(threads).toHaveLength(1);
-      expect(threads[0].id).toBe('test1');
+      expect(threads[0]).toEqual(new Thread(expectedThread));
     });
   });
 
@@ -147,14 +137,15 @@ describe('ThreadRepository postgres', () => {
 
     it('should return thread correctly', async () => {
       // Arrange
-      await ThreadsTableTestHelper.addThread({ id: 'thread1', owner: 'user-123' });
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      await ThreadsTableTestHelper.addThread({ id: 'thread1', owner: 'user-123' });
+      const [expectedThread] = await ThreadsTableTestHelper.findThreadsById('thread1');
 
       // Action
       const thread = await threadRepositoryPostgres.getThreadById('thread1');
 
       // Assert
-      expect(thread.id).toEqual('thread1');
+      expect(thread).toEqual(new Thread(expectedThread));
     });
   });
 
@@ -194,6 +185,7 @@ describe('ThreadRepository postgres', () => {
       // Arrange
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
       await ThreadsTableTestHelper.addThread({ id: 'test1', owner: 'user-123' });
+      const [expectedThread] = await ThreadsTableTestHelper.findThreadsById('test1');
 
       // Action
       await threadRepositoryPostgres.deleteThreadById('test1');
@@ -204,6 +196,7 @@ describe('ThreadRepository postgres', () => {
 
       const threadsDB = await ThreadsTableTestHelper.findThreadsById('test1');
       expect(threadsDB[0].isDeleted).toBeTruthy();
+      expect(new Thread(threadsDB[0])).toEqual(new Thread({ ...expectedThread, isDeleted: true }));
     });
   });
 });

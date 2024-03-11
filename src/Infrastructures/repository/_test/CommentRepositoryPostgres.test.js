@@ -97,29 +97,17 @@ describe('CommentRepository postgres', () => {
       await CommentsTableTestHelper.addComment({ id: 'test1', owner: 'user-123', thread: 'thread-123' });
       await CommentsTableTestHelper.addComment({ id: 'test2', owner: 'user-123', thread: 'thread-123' });
 
+      const [expectedComment1, expectedComment2] = await CommentsTableTestHelper.findCommentsByThread('thread-123');
+
       // Action
       const comments = await commentRepository.getCommentsByThreadId('thread-123');
 
       // Assert
       expect(comments).toHaveLength(2);
-      expect(comments[0].id).toBe('test1');
-      expect(comments[0].owner).toBe('user-123');
-      expect(comments[0].thread).toBe('thread-123');
-      expect(comments[0].content).toBe('content');
-      expect(comments[0].isDeleted).toBeFalsy();
-      expect(comments[0].date).toBeDefined();
-      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
-      // Because diffrent time of local test and database
-      expect(() => new Date(comments[0].date)).not.toThrow(Error);
-      expect(comments[1].id).toBe('test2');
-      expect(comments[1].owner).toBe('user-123');
-      expect(comments[1].thread).toBe('thread-123');
-      expect(comments[1].content).toBe('content');
-      expect(comments[1].isDeleted).toBeFalsy();
-      expect(comments[1].date).toBeDefined();
-      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
-      // Because diffrent time of local test and database
-      expect(() => new Date(comments[1].date)).not.toThrow(Error);
+      expect(comments).toEqual([
+        new Comment(expectedComment1),
+        new Comment(expectedComment2),
+      ]);
     });
 
     it('should return empty array when payload is valid', async () => {
@@ -150,11 +138,13 @@ describe('CommentRepository postgres', () => {
       await CommentsTableTestHelper.addComment({ id: 'comment1', owner: 'user-123', thread: 'thread-123' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
+      const [expectedComment] = await CommentsTableTestHelper.findCommentsById('comment1');
+
       // Action
       const comment = await commentRepositoryPostgres.getCommentById('comment1');
 
       // Assert
-      expect(comment.id).toEqual('comment1');
+      expect(comment).toEqual(new Comment(expectedComment));
     });
   });
 
@@ -196,6 +186,7 @@ describe('CommentRepository postgres', () => {
       await CommentsTableTestHelper.addComment({
         id: 'test1', content: 'someContent', owner: 'user-123', thread: 'thread-123',
       });
+      const [expectedComment] = await CommentsTableTestHelper.findCommentsById('test1');
 
       // Action
       await commentRepositoryPostgres.deleteCommentById('test1');
@@ -203,6 +194,9 @@ describe('CommentRepository postgres', () => {
       // Assert
       const comments = await CommentsTableTestHelper.findCommentsById('test1');
       expect(comments[0].isDeleted).toBeTruthy();
+      expect(new Comment(comments[0])).toEqual(
+        new Comment({ ...expectedComment, isDeleted: true }),
+      );
     });
   });
 });

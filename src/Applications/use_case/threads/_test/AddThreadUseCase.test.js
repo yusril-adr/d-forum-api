@@ -49,7 +49,7 @@ describe('AddThreadUseCase', () => {
     const createdThread = await addThreadUsecase.execute('user-123', useCasePayload);
 
     // Assert
-    expect(createdThread).toStrictEqual(new Thread({
+    expect(createdThread).toEqual(new Thread({
       id: 'thread-1',
       title: useCasePayload.title,
       body: useCasePayload.body,

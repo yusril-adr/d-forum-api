@@ -45,7 +45,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
           threads.body,
           threads.owner,
           users.username,
-          threads."createdAt",
+          threads."createdAt" as date,
           threads."isDeleted"
         FROM threads
         JOIN users

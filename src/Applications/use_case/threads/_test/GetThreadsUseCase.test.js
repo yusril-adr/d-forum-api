@@ -5,21 +5,21 @@ const GetThreadsUseCase = require('../GetThreadsUseCase');
 describe('GetThreadsUseCase', () => {
   it('should orchestrating get threads action correctly', async () => {
     // Arrange
-    const expectedDate = new Date();
+    const currentDate = new Date();
 
     const mockThread1 = new Thread({
       id: 'thread-1',
       title: 'title-1',
       body: 'body-1',
       owner: 'user-123',
-      date: expectedDate,
+      date: currentDate,
     });
     const mockThread2 = new Thread({
       id: 'thread-2',
       title: 'title-2',
       body: 'body-2',
       owner: 'user-123',
-      date: expectedDate,
+      date: currentDate,
     });
 
     /** creating dependency of use case */
@@ -38,9 +38,23 @@ describe('GetThreadsUseCase', () => {
     const threads = await getThreadsUseCase.execute();
 
     // Assert
-    expect(threads).toHaveLength(2);
-    expect(threads[0].id).toStrictEqual('thread-1');
-    expect(threads[1].id).toStrictEqual('thread-2');
     expect(mockThreadRepository.getThreads).toHaveBeenCalled();
+    expect(threads).toHaveLength(2);
+    expect(threads).toEqual([
+      new Thread({
+        id: 'thread-1',
+        title: 'title-1',
+        body: 'body-1',
+        owner: 'user-123',
+        date: currentDate,
+      }),
+      new Thread({
+        id: 'thread-2',
+        title: 'title-2',
+        body: 'body-2',
+        owner: 'user-123',
+        date: currentDate,
+      }),
+    ]);
   });
 });

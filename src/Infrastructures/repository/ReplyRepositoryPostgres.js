@@ -68,19 +68,19 @@ class ReplyRepositoryPostgres extends ReplyRepository {
   async getReplyById(replyId) {
     const query = {
       text: `
-      SELECT
-        replies.id,
-        replies.content,
-        replies.owner,
-        replies.parent,
-        users.username,
-        replies."createdAt" as date,
-        replies."isDeleted"
-      FROM replies
-      JOIN users
-      ON replies.owner = users.id
-      WHERE
-        replies.id = $1
+        SELECT
+          replies.id,
+          replies.content,
+          replies.owner,
+          replies.parent,
+          users.username,
+          replies."createdAt" as date,
+          replies."isDeleted"
+        FROM replies
+        JOIN users
+        ON replies.owner = users.id
+        WHERE
+          replies.id = $1
       `,
       values: [replyId],
     };

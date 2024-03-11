@@ -18,9 +18,48 @@ const CommentsTableTestHelper = {
     await pool.query(query);
   },
 
+  async findCommentsByThread(threadId) {
+    const query = {
+      text: `
+        SELECT
+          comments.id,
+          comments.content,
+          comments.owner,
+          comments.thread,
+          users.username,
+          comments."createdAt" as date,
+          comments."isDeleted"
+        FROM comments
+        JOIN users
+        ON comments.owner = users.id
+        WHERE
+          comments.thread = $1
+        ORDER BY comments."createdAt"
+      `,
+      values: [threadId],
+    };
+
+    const result = await pool.query(query);
+    return result.rows;
+  },
+
   async findCommentsById(id) {
     const query = {
-      text: 'SELECT * FROM comments WHERE id = $1',
+      text: `
+        SELECT
+          comments.id,
+          comments.content,
+          comments.owner,
+          comments.thread,
+          users.username,
+          comments."createdAt" as date,
+          comments."isDeleted"
+        FROM comments
+        JOIN users
+        ON comments.owner = users.id
+        WHERE
+          comments.id = $1
+      `,
       values: [id],
     };
 

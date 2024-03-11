@@ -18,9 +18,48 @@ const RepliesTableTestHelper = {
     await pool.query(query);
   },
 
+  async findRepliesByParent(commentId) {
+    const query = {
+      text: `
+        SELECT
+          replies.id,
+          replies.content,
+          replies.owner,
+          replies.parent,
+          users.username,
+          replies."createdAt" as date,
+          replies."isDeleted"
+        FROM replies
+        JOIN users
+        ON replies.owner = users.id
+        WHERE
+          replies.parent = $1
+        ORDER BY
+          replies."createdAt"
+      `,
+      values: [commentId],
+    };
+    const result = await pool.query(query);
+    return result.rows;
+  },
+
   async findRepliesById(id) {
     const query = {
-      text: 'SELECT * FROM replies WHERE id = $1',
+      text: `
+        SELECT
+          replies.id,
+          replies.content,
+          replies.owner,
+          replies.parent,
+          users.username,
+          replies."createdAt" as date,
+          replies."isDeleted"
+        FROM replies
+        JOIN users
+        ON replies.owner = users.id
+        WHERE
+          replies.id = $1
+      `,
       values: [id],
     };
 

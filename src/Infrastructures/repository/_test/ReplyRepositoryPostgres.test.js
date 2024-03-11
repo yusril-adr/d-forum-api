@@ -100,29 +100,17 @@ describe('ReplyRepository postgres', () => {
       await RepliesTableTestHelper.addReply({ id: 'test1', owner: 'user-123', parent: 'comment-123' });
       await RepliesTableTestHelper.addReply({ id: 'test2', owner: 'user-123', parent: 'comment-123' });
 
+      const [expectedReply1, expectedReply2] = await RepliesTableTestHelper.findRepliesByParent('comment-123');
+
       // Action
       const replies = await replyRepositoryPostgres.getRepliesByCommentId('comment-123');
 
       // Assert
       expect(replies).toHaveLength(2);
-      expect(replies[0].id).toBe('test1');
-      expect(replies[0].owner).toBe('user-123');
-      expect(replies[0].parent).toBe('comment-123');
-      expect(replies[0].content).toBe('content');
-      expect(replies[0].isDeleted).toBeFalsy();
-      expect(replies[0].date).toBeDefined();
-      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
-      // Because diffrent time of local test and database
-      expect(() => new Date(replies[0].date)).not.toThrow(Error);
-      expect(replies[1].id).toBe('test2');
-      expect(replies[1].owner).toBe('user-123');
-      expect(replies[1].parent).toBe('comment-123');
-      expect(replies[1].content).toBe('content');
-      expect(replies[1].isDeleted).toBeFalsy();
-      expect(replies[1].date).toBeDefined();
-      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
-      // Because diffrent time of local test and database
-      expect(() => new Date(replies[1].date)).not.toThrow(Error);
+      expect(replies).toEqual([
+        new Reply(expectedReply1),
+        new Reply(expectedReply2),
+      ]);
     });
 
     it('should return empty array when payload is valid', async () => {
@@ -153,11 +141,13 @@ describe('ReplyRepository postgres', () => {
       await RepliesTableTestHelper.addReply({ id: 'test1', owner: 'user-123', parent: 'comment-123' });
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
 
+      const [expectedReply] = await RepliesTableTestHelper.findRepliesById('test1');
+
       // Action
       const comment = await replyRepositoryPostgres.getReplyById('test1');
 
       // Assert
-      expect(comment.id).toEqual('test1');
+      expect(comment).toEqual(expectedReply);
     });
   });
 
@@ -199,6 +189,7 @@ describe('ReplyRepository postgres', () => {
       await RepliesTableTestHelper.addReply({
         id: 'test1', content: 'someContent', owner: 'user-123', parent: 'comment-123',
       });
+      const [expectedReply] = await RepliesTableTestHelper.findRepliesById('test1');
 
       // Action
       await replyRepositoryPostgres.deleteReplyById('test1');
@@ -206,6 +197,7 @@ describe('ReplyRepository postgres', () => {
       // Assert
       const replies = await RepliesTableTestHelper.findRepliesById('test1');
       expect(replies[0].isDeleted).toBeTruthy();
+      expect(new Reply(replies[0])).toEqual(new Reply({ ...expectedReply, isDeleted: true }));
     });
   });
 });
