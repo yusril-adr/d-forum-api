@@ -15,7 +15,12 @@ describe('DeleteReplyByIdUseCase', () => {
     /** mocking needed function */
     mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
-
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.getReplyById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.deleteReplyById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
     /** creating use case instance */
     const deleteReplyByIdUseCase = new DeleteReplyByIdUseCase({
       threadRepository: mockThreadRepository,
@@ -30,6 +35,10 @@ describe('DeleteReplyByIdUseCase', () => {
       commentId: 'comment-123',
       replyId: 'reply-123',
     })).rejects.toThrow(Error);
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).not.toHaveBeenCalled();
+    expect(mockReplyRepository.getReplyById).not.toHaveBeenCalled();
+    expect(mockReplyRepository.deleteReplyById).not.toHaveBeenCalled();
   });
 
   it('should throw error when comment is not found', async () => {
@@ -44,6 +53,10 @@ describe('DeleteReplyByIdUseCase', () => {
       .mockImplementation(() => Promise.resolve());
     mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
+    mockReplyRepository.getReplyById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.deleteReplyById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     /** creating use case instance */
     const deleteCommentByIdUseCase = new DeleteReplyByIdUseCase({
@@ -60,6 +73,9 @@ describe('DeleteReplyByIdUseCase', () => {
       replyId: 'reply-123',
     })).rejects.toThrow(Error);
     expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
+    expect(mockReplyRepository.getReplyById).not.toHaveBeenCalled();
+    expect(mockReplyRepository.deleteReplyById).not.toHaveBeenCalled();
   });
 
   it('should throw error when reply is not found', async () => {
@@ -76,6 +92,8 @@ describe('DeleteReplyByIdUseCase', () => {
       .mockImplementation(() => Promise.resolve());
     mockReplyRepository.getReplyById = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
+    mockReplyRepository.deleteReplyById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     /** creating use case instance */
     const deleteReplyByIdUseCase = new DeleteReplyByIdUseCase({
@@ -93,6 +111,8 @@ describe('DeleteReplyByIdUseCase', () => {
     })).rejects.toThrow(Error);
     expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
     expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
+    expect(mockReplyRepository.getReplyById).toHaveBeenCalledWith('reply-123');
+    expect(mockReplyRepository.deleteReplyById).not.toHaveBeenCalled();
   });
 
   it('should throw error when user id is not the owner', async () => {

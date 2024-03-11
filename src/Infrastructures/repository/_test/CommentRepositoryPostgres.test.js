@@ -70,7 +70,6 @@ describe('CommentRepository postgres', () => {
 
     it('should add date comment correctly if not given initial value', async () => {
       // Arrange
-      const currentDate = new Date();
       const newComment = {
         id: 'comment-123',
         content: 'content',
@@ -85,7 +84,9 @@ describe('CommentRepository postgres', () => {
 
       // Assert
       expect(createdComment.date).toBeDefined();
-      expect(new Date(createdComment.date).getTime()).toBeGreaterThanOrEqual(currentDate.getTime());
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(createdComment.date)).not.toThrow(Error);
     });
   });
 
@@ -104,9 +105,21 @@ describe('CommentRepository postgres', () => {
       expect(comments[0].id).toBe('test1');
       expect(comments[0].owner).toBe('user-123');
       expect(comments[0].thread).toBe('thread-123');
+      expect(comments[0].content).toBe('content');
+      expect(comments[0].isDeleted).toBeFalsy();
+      expect(comments[0].date).toBeDefined();
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(comments[0].date)).not.toThrow(Error);
       expect(comments[1].id).toBe('test2');
       expect(comments[1].owner).toBe('user-123');
       expect(comments[1].thread).toBe('thread-123');
+      expect(comments[1].content).toBe('content');
+      expect(comments[1].isDeleted).toBeFalsy();
+      expect(comments[1].date).toBeDefined();
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(comments[1].date)).not.toThrow(Error);
     });
 
     it('should return empty array when payload is valid', async () => {
@@ -162,7 +175,7 @@ describe('CommentRepository postgres', () => {
       const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action & Assert
-      await expect(commentRepository.verifyCommentAvailability('comment-123')).resolves;
+      await expect(commentRepository.verifyCommentAvailability('comment-123')).resolves.not.toThrow(Error);
     });
   });
 

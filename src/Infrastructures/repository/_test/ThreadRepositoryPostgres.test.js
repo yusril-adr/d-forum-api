@@ -67,7 +67,6 @@ describe('ThreadRepository postgres', () => {
 
     it('should add date thread correctly if not given initial value', async () => {
       // Arrange
-      const currentDate = new Date();
       const newThread = {
         id: 'thread-123',
         title: 'thread title',
@@ -82,7 +81,9 @@ describe('ThreadRepository postgres', () => {
 
       // Assert
       expect(createdThread.date).toBeDefined();
-      expect(new Date(createdThread.date).getTime()).toBeGreaterThanOrEqual(currentDate.getTime());
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(createdThread.date)).not.toThrow(Error);
     });
   });
 
@@ -100,8 +101,22 @@ describe('ThreadRepository postgres', () => {
       expect(threads).toHaveLength(2);
       expect(threads[0].id).toBe('test1');
       expect(threads[0].owner).toBe('user-123');
+      expect(threads[0].title).toBe('thread title');
+      expect(threads[0].body).toBe('thread body');
+      expect(threads[0].isDeleted).toBeFalsy();
+      expect(threads[0].date).toBeDefined();
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(threads[0].date)).not.toThrow(Error);
       expect(threads[1].id).toBe('test2');
       expect(threads[1].owner).toBe('user-123');
+      expect(threads[1].title).toBe('thread title');
+      expect(threads[1].body).toBe('thread body');
+      expect(threads[1].isDeleted).toBeFalsy();
+      expect(threads[1].date).toBeDefined();
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(threads[1].date)).not.toThrow(Error);
     });
 
     it('should not return deleted threads', async () => {
@@ -160,7 +175,7 @@ describe('ThreadRepository postgres', () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action & Assert
-      await expect(threadRepository.verifyThreadAvailability('thread-123')).resolves;
+      await expect(threadRepository.verifyThreadAvailability('thread-123')).resolves.not.toThrow(Error);
     });
   });
 

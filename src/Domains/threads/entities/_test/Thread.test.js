@@ -47,6 +47,14 @@ describe('Thread entities', () => {
     expect(thread.title).toEqual('someTitle');
     expect(thread.body).toEqual('someBody');
     expect(thread.owner).toEqual('someOwner');
+    expect(thread.date).toBeDefined();
+    // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+    // Because diffrent time of local test and database
+    expect(() => new Date(thread.date)).not.toThrow(Error);
+    expect(thread.isDeleted).toEqual(false);
+    expect(thread.username).toBeUndefined();
+    expect(thread.Comment).toBeUndefined();
+    expect(thread.comments).toHaveLength(0);
   });
 
   it('should hide title and body content when thread is deleted', () => {

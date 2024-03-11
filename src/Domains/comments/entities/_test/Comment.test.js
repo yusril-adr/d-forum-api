@@ -47,6 +47,13 @@ describe('Comment entities', () => {
     expect(comment.content).toEqual('someContent');
     expect(comment.owner).toEqual('someOwner');
     expect(comment.thread).toEqual('someThread');
+    // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+    // Because diffrent time of local test and database
+    expect(() => new Date(comment.date)).not.toThrow(Error);
+    expect(comment.isDeleted).toEqual(false);
+    expect(comment.username).toBeUndefined();
+    expect(comment.Reply).toBeUndefined();
+    expect(comment.replies).toHaveLength(0);
   });
 
   it('should hide content when comment is deleted', () => {

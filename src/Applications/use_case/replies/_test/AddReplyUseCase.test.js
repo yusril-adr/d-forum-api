@@ -23,6 +23,10 @@ describe('AddReplyUseCase', () => {
     /** mocking needed function */
     mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.addReply = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     /** creating use case instance */
     const addReplyUseCase = new AddReplyUseCase({
@@ -39,6 +43,9 @@ describe('AddReplyUseCase', () => {
       commentId: 'comment-123',
       useCasePayload,
     })).rejects.toThrow(Error);
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).not.toHaveBeenCalled();
+    expect(mockReplyRepository.addReply).not.toHaveBeenCalled();
   });
 
   it('should throw error when comment is not found', async () => {
@@ -61,6 +68,8 @@ describe('AddReplyUseCase', () => {
       .mockImplementation(() => Promise.resolve());
     mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.reject(new Error()));
+    mockReplyRepository.addReply = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     /** creating use case instance */
     const addReplyUseCase = new AddReplyUseCase({
@@ -77,6 +86,9 @@ describe('AddReplyUseCase', () => {
       commentId: 'comment-123',
       useCasePayload,
     })).rejects.toThrow(Error);
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
+    expect(mockReplyRepository.addReply).not.toHaveBeenCalled();
   });
 
   it('should orchestrating the add reply action correctly', async () => {

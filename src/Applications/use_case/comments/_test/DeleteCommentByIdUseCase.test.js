@@ -30,6 +30,9 @@ describe('DeleteCommentByIdUseCase', () => {
       threadId: 'thread-123',
       commentId: 'comment-123',
     })).rejects.toThrow(Error);
+    expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentById).not.toHaveBeenCalled();
+    expect(mockCommentRepository.deleteCommentById).not.toHaveBeenCalled();
   });
 
   it('should throw error when comment is not found', async () => {
@@ -59,6 +62,8 @@ describe('DeleteCommentByIdUseCase', () => {
       commentId: 'comment-123',
     })).rejects.toThrow(Error);
     expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+    expect(mockCommentRepository.deleteCommentById).not.toHaveBeenCalled();
   });
 
   it('should throw error when user id is not the owner', async () => {
@@ -97,6 +102,8 @@ describe('DeleteCommentByIdUseCase', () => {
       commentId: 'comment-123',
     })).rejects.toThrow('DELETE_COMMENT_USECASE.NOT_AUTHORIZED');
     expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentById).toHaveBeenCalledWith('comment-123');
+    expect(mockCommentRepository.deleteCommentById).not.toHaveBeenCalled();
   });
 
   it('should orchestrating delete comment by id action correctly', async () => {

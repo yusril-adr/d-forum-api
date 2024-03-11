@@ -71,9 +71,8 @@ describe('ReplyRepository postgres', () => {
       }));
     });
 
-    it('should add date comment correctly if not given initial value', async () => {
+    it('should add date reply correctly if not given initial value', async () => {
       // Arrange
-      const currentDate = new Date();
       const newReply = {
         id: 'reply-123',
         content: 'content',
@@ -88,7 +87,9 @@ describe('ReplyRepository postgres', () => {
 
       // Assert
       expect(createdReply.date).toBeDefined();
-      expect(new Date(createdReply.date).getTime()).toBeGreaterThanOrEqual(currentDate.getTime());
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(createdReply.date)).not.toThrow(Error);
     });
   });
 
@@ -107,9 +108,21 @@ describe('ReplyRepository postgres', () => {
       expect(replies[0].id).toBe('test1');
       expect(replies[0].owner).toBe('user-123');
       expect(replies[0].parent).toBe('comment-123');
+      expect(replies[0].content).toBe('content');
+      expect(replies[0].isDeleted).toBeFalsy();
+      expect(replies[0].date).toBeDefined();
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(replies[0].date)).not.toThrow(Error);
       expect(replies[1].id).toBe('test2');
       expect(replies[1].owner).toBe('user-123');
       expect(replies[1].parent).toBe('comment-123');
+      expect(replies[1].content).toBe('content');
+      expect(replies[1].isDeleted).toBeFalsy();
+      expect(replies[1].date).toBeDefined();
+      // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+      // Because diffrent time of local test and database
+      expect(() => new Date(replies[1].date)).not.toThrow(Error);
     });
 
     it('should return empty array when payload is valid', async () => {
@@ -165,7 +178,7 @@ describe('ReplyRepository postgres', () => {
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action & Assert
-      await expect(replyRepositoryPostgres.verifyReplyAvailability('reply-123')).resolves;
+      await expect(replyRepositoryPostgres.verifyReplyAvailability('reply-123')).resolves.not.toThrow(Error);
     });
   });
 

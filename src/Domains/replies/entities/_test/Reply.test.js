@@ -44,6 +44,11 @@ describe('Reply entities', () => {
     expect(reply.content).toEqual('someContent');
     expect(reply.owner).toEqual('someOwner');
     expect(reply.parent).toEqual('someParent');
+    // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
+    // Because diffrent time of local test and database
+    expect(() => new Date(reply.date)).not.toThrow(Error);
+    expect(reply.isDeleted).toEqual(false);
+    expect(reply.username).toBeUndefined();
   });
 
   it('should hide content when reply is deleted', () => {
