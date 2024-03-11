@@ -35,6 +35,7 @@ describe('DeleteThreadByIdUseCase', () => {
 
     // Assert
     expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-1');
+    expect(mockThreadRepository.deleteThreadById).not.toHaveBeenCalled();
   });
 
   it('should orchestrating delete thread by id action correctly', async () => {

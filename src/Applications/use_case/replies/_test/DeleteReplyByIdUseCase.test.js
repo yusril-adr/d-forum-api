@@ -158,6 +158,7 @@ describe('DeleteReplyByIdUseCase', () => {
     expect(mockThreadRepository.verifyThreadAvailability).toHaveBeenCalledWith('thread-123');
     expect(mockCommentRepository.verifyCommentAvailability).toHaveBeenCalledWith('comment-123');
     expect(mockReplyRepository.getReplyById).toHaveBeenCalledWith('reply-123');
+    expect(mockReplyRepository.deleteReplyById).not.toHaveBeenCalled();
   });
 
   it('should orchestrating delete reply by id action correctly', async () => {

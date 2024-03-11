@@ -90,12 +90,12 @@ describe('ThreadRepository postgres', () => {
   describe('getThreads', () => {
     it('should return threads correctly', async () => {
       // Arrange
-      const threadRepository = new ThreadRepositoryPostgres(pool, {});
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
       await ThreadsTableTestHelper.addThread({ id: 'test1', owner: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'test2', owner: 'user-123' });
 
       // Action
-      const threads = await threadRepository.getThreads();
+      const threads = await threadRepositoryPostgres.getThreads();
 
       // Assert
       expect(threads).toHaveLength(2);
@@ -121,12 +121,12 @@ describe('ThreadRepository postgres', () => {
 
     it('should not return deleted threads', async () => {
       // Arrange
-      const threadRepository = new ThreadRepositoryPostgres(pool, {});
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
       await ThreadsTableTestHelper.addThread({ id: 'test1', owner: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'test2', owner: 'user-123', isDeleted: true });
 
       // Action
-      const threads = await threadRepository.getThreads();
+      const threads = await threadRepositoryPostgres.getThreads();
 
       // Assert
       expect(threads).toHaveLength(1);
