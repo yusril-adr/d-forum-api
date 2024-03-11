@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/app.js",
     "start:dev": "nodemon src/app.js",
-    "test": "jest --runInBand  --detectOpenHandles --coverage --setupFiles dotenv/config",
+    "test": "jest --runInBand  --detectOpenHandles --setupFiles dotenv/config",
     "test:watch": "jest --watch --runInBand --detectOpenHandles --coverage --setupFiles dotenv/config",
     "test:watchAll": "jest --watchAll --runInBand --detectOpenHandles --coverage --setupFiles dotenv/config",
     "migrate": "node-pg-migrate",
