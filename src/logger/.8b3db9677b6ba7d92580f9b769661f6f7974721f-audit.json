@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 7
+    },
+    "auditLog": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\.8b3db9677b6ba7d92580f9b769661f6f7974721f-audit.json",
+    "files": [
+        {
+            "date": 1710577706694,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-16-15.log",
+            "hash": "899afef7e73b896cd89f801e34f607c7aed59a604319d2927393dfafbc184ee9"
+        },
+        {
+            "date": 1710579888825,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-16-16.log",
+            "hash": "1dd4a46c0046614461171d0878595a660840f2c658381366491c1b499450387a"
+        },
+        {
+            "date": 1710583296853,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-16-17.log",
+            "hash": "722f8920bd3a494eb365329d02eedf45a3f8c6f022d4e495ca3d274c9f64f7f2"
+        }
+    ],
+    "hashType": "sha256"
+}

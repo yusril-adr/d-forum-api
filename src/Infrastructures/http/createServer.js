@@ -1,6 +1,11 @@
+const os = require('os');
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const HapiSwagger = require('hapi-swagger');
+const Inert = require('@hapi/inert');
+const Vision = require('@hapi/vision');
 const config = require('../../Commons/config');
+const logger = require('../../logger');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 const ClientError = require('../../Commons/exceptions/ClientError');
 
@@ -22,10 +27,27 @@ const createServer = async (container) => {
     },
   });
 
+  const swaggerOptions = {
+    info: {
+      title: 'DForum API Documentation',
+      version: '1.0.0',
+    },
+  };
+
   // External Plugin Registration
   await server.register([
     {
       plugin: Jwt,
+    },
+    {
+      plugin: Inert,
+    },
+    {
+      plugin: Vision,
+    },
+    {
+      plugin: HapiSwagger,
+      options: swaggerOptions,
     },
   ]);
 
@@ -90,6 +112,9 @@ const createServer = async (container) => {
         return h.continue;
       }
 
+      if (process.env.NODE_ENV === 'production') {
+        logger.info(`userIP=${request.info.remoteAddress}, host=${os.hostname},  method=${request.method}, path=${request.path}, payload=${JSON.stringify(response.source)}`);
+      }
       const newResponse = h.response({
         status: 'error',
         message: 'terjadi kegagalan pada server kami',

@@ -120,8 +120,8 @@ describe('/authentications endpoint', () => {
       // Assert
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('harus mengirimkan username dan password');
+      expect(responseJson.error).toEqual('Bad Request');
+      expect(responseJson.message).toEqual('Invalid request payload input');
     });
 
     it('should response 400 if login payload wrong data type', async () => {
@@ -142,8 +142,8 @@ describe('/authentications endpoint', () => {
       // Assert
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('username dan password harus string');
+      expect(responseJson.error).toEqual('Bad Request');
+      expect(responseJson.message).toEqual('Invalid request payload input');
     });
   });
 
@@ -200,8 +200,8 @@ describe('/authentications endpoint', () => {
 
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('harus mengirimkan token refresh');
+      expect(responseJson.error).toEqual('Bad Request');
+      expect(responseJson.message).toEqual('Invalid request payload input');
     });
 
     it('should return 400 if refresh token not string', async () => {
@@ -219,8 +219,8 @@ describe('/authentications endpoint', () => {
 
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('refresh token harus string');
+      expect(responseJson.error).toEqual('Bad Request');
+      expect(responseJson.message).toEqual('Invalid request payload input');
     });
 
     it('should return 400 if refresh token not valid', async () => {
@@ -321,8 +321,8 @@ describe('/authentications endpoint', () => {
 
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('harus mengirimkan token refresh');
+      expect(responseJson.error).toEqual('Bad Request');
+      expect(responseJson.message).toEqual('Invalid request payload input');
     });
 
     it('should response 400 if refresh token not string', async () => {
@@ -340,8 +340,8 @@ describe('/authentications endpoint', () => {
 
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('refresh token harus string');
+      expect(responseJson.error).toEqual('Bad Request');
+      expect(responseJson.message).toEqual('Invalid request payload input');
     });
   });
 });
