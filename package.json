@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node src/app.js",
     "start:dev": "nodemon src/app.js",
-    "test": "jest --runInBand  --detectOpenHandles --setupFiles dotenv/config",
-    "test:watch": "jest --watch --runInBand --detectOpenHandles --coverage --setupFiles dotenv/config",
-    "test:watchAll": "jest --watchAll --runInBand --detectOpenHandles --coverage --setupFiles dotenv/config",
+    "test": "cross-env DOTENV_CONFIG_PATH=.test.env jest --runInBand  --detectOpenHandles --setupFiles dotenv/config",
+    "test:watch": "cross-env DOTENV_CONFIG_PATH=.test.env jest --watch --runInBand --detectOpenHandles --coverage --setupFiles dotenv/config",
+    "test:watchAll": "cross-env DOTENV_CONFIG_PATH=.test.env jest --watchAll --runInBand --detectOpenHandles --coverage --setupFiles dotenv/config",
     "migrate": "node-pg-migrate",
     "migrate:test": "node-pg-migrate --envPath .test.env",
     "prettier": "npx prettier . --write",
@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
