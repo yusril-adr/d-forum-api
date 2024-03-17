@@ -18,8 +18,8 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          cd ~/dforum-api
+          cd ~/d-forum-api
           git pull origin master
           npm install
           npm run migrate up
-          pm2 restart dforum-api
+          pm2 restart d-forum-api
