@@ -430,27 +430,27 @@ container.register([
       ],
     },
   },
-  // {
-  //   key: LikeCommentUseCase.name,
-  //   Class: LikeCommentUseCase,
-  //   parameter: {
-  //     injectType: 'destructuring',
-  //     dependencies: [
-  //       {
-  //         name: 'threadRepository',
-  //         internal: ThreadRepository.name,
-  //       },
-  //       {
-  //         name: 'commentRepository',
-  //         internal: CommentRepository.name,
-  //       },
-  //       {
-  //         name: 'likeRepository',
-  //         internal: LikeRepository.name,
-  //       },
-  //     ],
-  //   },
-  // },
+  {
+    key: LikeCommentUseCase.name,
+    Class: LikeCommentUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'threadRepository',
+          internal: ThreadRepository.name,
+        },
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name,
+        },
+        {
+          name: 'likeRepository',
+          internal: LikeRepository.name,
+        },
+      ],
+    },
+  },
 ]);
 
 module.exports = container;
