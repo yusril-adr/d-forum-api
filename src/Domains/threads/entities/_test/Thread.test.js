@@ -47,6 +47,7 @@ describe('Thread entities', () => {
     expect(thread.title).toEqual('someTitle');
     expect(thread.body).toEqual('someBody');
     expect(thread.owner).toEqual('someOwner');
+    expect(thread.likeCount).toEqual(0);
     expect(thread.date).toBeDefined();
     // Avoid using toBeLessThanOrEqual and toBeGreaterThanOrEqual
     // Because diffrent time of local test and database

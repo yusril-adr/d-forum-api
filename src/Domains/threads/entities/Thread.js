@@ -5,6 +5,7 @@ class Thread {
     this.body = payload.body;
     this.owner = payload.owner;
     this.username = payload.username;
+    this.likeCount = payload.likeCount || 0;
     this.date = payload.date || new Date();
     this.isDeleted = payload.isDeleted || false;
     this.Comment = undefined;
@@ -20,6 +21,7 @@ class Thread {
       body,
       owner,
       username,
+      likeCount = 0,
       date = new Date(),
       isDeleted = false,
     } = payload;
@@ -34,6 +36,7 @@ class Thread {
       || typeof body !== 'string'
       || typeof owner !== 'string'
       || (username && (typeof username !== 'string'))
+      || typeof likeCount !== 'number'
       || !(date instanceof Date)
       || typeof isDeleted !== 'boolean'
     ) {

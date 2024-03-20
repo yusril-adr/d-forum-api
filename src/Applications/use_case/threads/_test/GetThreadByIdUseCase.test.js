@@ -2,6 +2,7 @@ const Thread = require('../../../../Domains/threads/entities/Thread');
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository');
 const Comment = require('../../../../Domains/comments/entities/Comment');
 const CommentRepository = require('../../../../Domains/comments/CommentRepository');
+const LikeRepository = require('../../../../Domains/likes/LikeRepository');
 const Reply = require('../../../../Domains/replies/entities/Reply');
 const ReplyRepository = require('../../../../Domains/replies/ReplyRepository');
 const GetThreadByIdUseCase = require('../GetThreadByIdUseCase');
@@ -40,6 +41,7 @@ describe('GetThreadByIdUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     /** mocking needed function */
     mockThreadRepository.getThreadById = jest.fn()
@@ -48,12 +50,17 @@ describe('GetThreadByIdUseCase', () => {
       .mockImplementation(() => Promise.resolve([mockComment]));
     mockReplyRepository.getRepliesByCommentId = jest.fn()
       .mockImplementation(() => Promise.resolve([mockReply]));
+    mockLikeRepository.getThreadLikesCount = jest.fn()
+      .mockImplementation(() => Promise.resolve(2));
+    mockLikeRepository.getCommentLikesCount = jest.fn()
+      .mockImplementation(() => Promise.resolve(2));
 
     /** creating use case instance */
     const getThreadByIdUseCase = new GetThreadByIdUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
       Comment,
       Reply,
     });
@@ -65,6 +72,7 @@ describe('GetThreadByIdUseCase', () => {
       body: 'body-1',
       owner: 'user-123',
       date: expectedDate,
+      likeCount: 2,
     });
 
     const expectedComment = new Comment({
@@ -73,6 +81,7 @@ describe('GetThreadByIdUseCase', () => {
       owner: 'user-123',
       thread: 'thread-123',
       date: expectedDate,
+      likeCount: 2,
     });
 
     const expectedReply = new Reply({
@@ -94,7 +103,9 @@ describe('GetThreadByIdUseCase', () => {
     // Assert
     expect(thread).toStrictEqual(expectedThread);
     expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
+    expect(mockLikeRepository.getThreadLikesCount).toHaveBeenCalledWith('thread-123');
     expect(mockCommentRepository.getCommentsByThreadId).toHaveBeenCalledWith('thread-123');
+    expect(mockLikeRepository.getCommentLikesCount).toHaveBeenCalledWith('comment-123');
     expect(mockReplyRepository.getRepliesByCommentId).toHaveBeenCalledWith('comment-123');
   });
 });

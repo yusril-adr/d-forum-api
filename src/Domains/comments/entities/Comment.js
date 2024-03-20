@@ -4,6 +4,7 @@ class Comment {
     this.content = payload.content;
     this.owner = payload.owner;
     this.username = payload.username;
+    this.likeCount = payload.likeCount || 0;
     this.thread = payload.thread;
     this.date = payload.date || new Date();
     this.isDeleted = payload.isDeleted || false;
@@ -19,6 +20,7 @@ class Comment {
       content,
       owner,
       username,
+      likeCount = 0,
       thread,
       date = new Date(),
       isDeleted = false,
@@ -33,6 +35,7 @@ class Comment {
       || typeof content !== 'string'
       || typeof owner !== 'string'
       || (username && (typeof username !== 'string'))
+      || typeof likeCount !== 'number'
       || typeof thread !== 'string'
       || !(date instanceof Date)
       || typeof isDeleted !== 'boolean'
