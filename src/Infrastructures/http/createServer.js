@@ -14,6 +14,7 @@ const authentications = require('../../Interfaces/http/api/authentications');
 const threads = require('../../Interfaces/http/api/threads');
 const comments = require('../../Interfaces/http/api/comments');
 const replies = require('../../Interfaces/http/api/replies');
+const likes = require('../../Interfaces/http/api/likes');
 
 const createServer = async (container) => {
   const server = Hapi.server({
@@ -89,6 +90,10 @@ const createServer = async (container) => {
       plugin: replies,
       options: { container },
     },
+    {
+      plugin: likes,
+      options: { container },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
@@ -112,9 +117,7 @@ const createServer = async (container) => {
         return h.continue;
       }
 
-      if (process.env.NODE_ENV === 'production') {
-        logger.info(`userIP=${request.info.remoteAddress}, host=${os.hostname},  method=${request.method}, path=${request.path}, payload=${JSON.stringify(response.source)}`);
-      }
+      logger.info(`userIP=${request.info.remoteAddress}, host=${os.hostname},  method=${request.method}, path=${request.path}, payload=${JSON.stringify(response.source)}`);
       const newResponse = h.response({
         status: 'error',
         message: 'terjadi kegagalan pada server kami',

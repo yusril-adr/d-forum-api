@@ -52,6 +52,7 @@ describe('Comment entities', () => {
     expect(() => new Date(comment.date)).not.toThrow(Error);
     expect(comment.isDeleted).toEqual(false);
     expect(comment.username).toBeUndefined();
+    expect(comment.likeCount).toEqual(0);
     expect(comment.Reply).toBeUndefined();
     expect(comment.replies).toHaveLength(0);
   });

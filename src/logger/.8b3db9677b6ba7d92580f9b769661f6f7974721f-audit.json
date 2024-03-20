@@ -6,24 +6,29 @@
     "auditLog": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\.8b3db9677b6ba7d92580f9b769661f6f7974721f-audit.json",
     "files": [
         {
-            "date": 1710577706694,
-            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-16-15.log",
-            "hash": "899afef7e73b896cd89f801e34f607c7aed59a604319d2927393dfafbc184ee9"
+            "date": 1710927211747,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-20-16.log",
+            "hash": "41542354dea7ed43e74054d52db19a66d5cb73f4a4145c3379adca31d773846e"
         },
         {
-            "date": 1710579888825,
-            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-16-16.log",
-            "hash": "1dd4a46c0046614461171d0878595a660840f2c658381366491c1b499450387a"
+            "date": 1710928922359,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-20-17.log",
+            "hash": "e5647627f1af70a5402f576f4f8485841a0def5dd0339e4641c98c53225fc047"
         },
         {
-            "date": 1710583296853,
-            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-16-17.log",
-            "hash": "722f8920bd3a494eb365329d02eedf45a3f8c6f022d4e495ca3d274c9f64f7f2"
+            "date": 1710933800335,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-20-18.log",
+            "hash": "1a6884b305876256c720516904abaf95c6e55999a9db530d18bb6a22b9f935da"
         },
         {
-            "date": 1710679215015,
-            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-17-19.log",
-            "hash": "6d9a5fbbb9417553bb4c6805b6a73340c899cc74e51b6c91f0a575b3eedac2cf"
+            "date": 1710952360034,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-20-23.log",
+            "hash": "983c63f9aaadffcca3955e8183ccb7f54b649ae74f96d6ed847d5f9ed985c98f"
+        },
+        {
+            "date": 1710954344992,
+            "name": "D:\\Project\\Coding\\Web\\d-forum-api\\src\\logger\\application-2024-03-21-00.log",
+            "hash": "1476b58541393f3a971be45c49942dec3ac0ad03c9795cfa66874eda500c7f47"
         }
     ],
     "hashType": "sha256"

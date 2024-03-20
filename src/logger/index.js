@@ -1,3 +1,6 @@
+/* istanbul ignore file */
+// Ignore test for avoiding creating file every test
+// and avoiding replacing log file for production
 const path = require('path');
 const { createLogger, format, transports } = require('winston');
 require('winston-daily-rotate-file');
@@ -22,7 +25,7 @@ const logger = createLogger({
     format.splat(),
   ),
   transports: [
-    transport,
+    process.env.NODE_ENV === 'production' ? transport : new transports.Console(),
   ],
 });
 
